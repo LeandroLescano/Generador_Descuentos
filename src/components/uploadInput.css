@@ -1,0 +1,44 @@
+.file_upload {
+  position: relative;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 50;
+  cursor: pointer;
+  z-index: 5;
+  background-color: lightgray;
+}
+
+.file-upload {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  height: 200px;
+  padding: 5px 10px;
+  font-size: 1rem;
+  text-align: center;
+  color: #ccc;
+}
+
+.centrado {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

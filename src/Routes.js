@@ -61,12 +61,14 @@ import NotificationPage from "./pages/NotificationPage";
 import InputGroupPage from "./pages/InputGroupPage";
 import TreeviewPage from "./pages/TreeviewPage";
 import RatingPage from "./pages/RatingPage";
+import ResultPage from "./pages/ResultPage";
 
 class Routes extends React.Component {
   render() {
     return (
       <Switch>
         <Route exact path="/" component={HomePage} />
+        <Route exact path="/resultados" component={ResultPage} />
         <Route exact path="/addons" component={AddonsNavPage} />
         <Route exact path="/advanced" component={AdvancedNavPage} />
         <Route exact path="/components" component={ComponentsNavPage} />

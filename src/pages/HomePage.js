@@ -1,7 +1,8 @@
-import React, { useCallback } from "react";
+import React from "react";
 import "./HomePage.css";
 import UploadPage from "./UploadPage";
 import ResultPage from "./ResultPage";
+import { Redirect } from "react-router-dom";
 
 class HomePage extends React.Component {
   state = {
@@ -10,23 +11,30 @@ class HomePage extends React.Component {
     nameAusencias: "",
     fileNovedades: null,
     fileAusencias: null,
-    uploadValue: 0,
+    descuentos: [
+      {
+        nombre: "",
+        numero: null,
+        agentesAus: [],
+        agentesNov: []
+      }
+    ],
     agente: [],
     mostrarModal: false,
     resultados: false
   };
 
   handleChange = e => {
-    this.setState({ agente: e }, () => {
+    this.setState({ descuentos: e }, () => {
       this.mostrarResultados();
     });
   };
 
-  mostrarResultados() {
+  mostrarResultados = () => {
     this.setState({
       resultados: true
     });
-  }
+  };
 
   scrollToTop = () => window.scrollTo(0, 0);
   render() {
@@ -38,7 +46,15 @@ class HomePage extends React.Component {
             onUpload={this.handleChange}
           />
         )}
-        {this.state.resultados && <ResultPage agentes={this.state.agente} />}
+        {/* {this.state.resultados && (
+          <Redirect
+            to={{
+              pathname: "/resultados",
+              state: { agentes: this.state.agente }
+            }}
+          />
+        )} */}
+        {this.state.resultados && <ResultPage desc={this.state.descuentos} />}
       </>
     );
   }

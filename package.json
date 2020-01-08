@@ -5,16 +5,20 @@
   "// If You want to install mdbreact from our GitLab repository, please replace '4.23.1' with gitURL provided here ->": "git+https://oauth2:<YOUR-TOKEN-GOES-HERE>@git.mdbootstrap.com/mdb/react/re-pro.git",
   "dependencies": {
     "axios": "^0.19.0",
+    "file-saver": "^2.0.2",
     "firebase": "^7.6.0",
+    "firebase-tools": "^7.11.0",
     "mdbreact": "4.23.1",
     "papaparse": "^5.1.1",
     "react": "^16.9.0",
     "react-csv-reader": "^2.0.2",
     "react-dom": "^16.9.0",
+    "react-export-excel": "^0.5.3",
     "react-file-reader": "^1.1.4",
     "react-router-dom": "^5.0.1",
     "react-scripts": "^3.3.0",
-    "read-excel-file": "^4.0.5"
+    "read-excel-file": "^4.0.5",
+    "xlsx": "^0.15.4"
   },
   "scripts": {
     "start": "react-scripts start",

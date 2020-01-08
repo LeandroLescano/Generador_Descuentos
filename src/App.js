@@ -7,9 +7,7 @@ import {
   MDBCollapse,
   MDBNavItem,
   MDBFooter,
-  MDBNavLink,
-  MDBTooltip,
-  MDBIcon
+  MDBNavLink
 } from "mdbreact";
 import { ReactComponent as Logo } from "./assets/logo.svg";
 import { BrowserRouter as Router } from "react-router-dom";

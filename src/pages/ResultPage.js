@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import {
   MDBEdgeHeader,
   MDBFreeBird,
@@ -6,32 +6,49 @@ import {
   MDBCol,
   MDBRow,
   MDBCardBody,
-  MDBCard,
   MDBTable,
-  MDBTableBody,
   TableBody,
   MDBTableHead
 } from "mdbreact";
 import "./ResultPage.css";
+import ReactExport from "react-export-excel";
+import XLSX from "xlsx";
+import Loading from "../components/loading";
+
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 class ResultPage extends React.Component {
   state = {
-    agentes: []
+    descuentos: [
+      {
+        nombre: "",
+        numero: null,
+        agentesAus: [],
+        agentesNov: []
+      }
+    ],
+    loaded: false
   };
 
-  componentDidMount() {
-    console.log(this.props.agentes);
-    this.setState({
-      agentes: this.props.agentes
-    });
-  }
+  componentDidMount = () => {
+    setTimeout(
+      function() {
+        this.setState({
+          descuentos: this.props.desc,
+          loaded: true
+        });
+      }.bind(this),
+      2000
+    );
+  };
 
-  componentWillReceiveProps() {
-    console.log("agentes:" + this.props.agentes);
-    this.setState({
-      agentes: this.props.agentes
-    });
-  }
+  descargarExcel = () => {
+    var wb = XLSX.utils.book_new();
+    XLSX.write(wb, this.props.descuentos);
+    //XLSX.writeFile(this.props.agentes, "ausencias - 153");
+  };
 
   render() {
     const data = {
@@ -61,21 +78,21 @@ class ResultPage extends React.Component {
                 md="10"
                 className="mx-auto float-none white z-depth-1 py-2 px-2"
               >
-                <MDBCardBody className="text-center">
-                  <h2 className="h2-responsive mb-4">
-                    <strong className="font-weight-bold">Resultados</strong>
-                  </h2>
-                  <MDBRow />
-
-                  <MDBTable responsiveSm>
-                    <MDBTableHead
-                      columns={data.columns}
-                      color="indigo"
-                      textWhite
-                    />
-                    <TableBody>
-                      {this.state.agentes.map((item, i) => {
-                        if (item.diasdesc > 0) {
+                {!this.state.loaded && <Loading />}
+                {this.state.loaded && (
+                  <MDBCardBody className="text-center">
+                    <h2 className="h2-responsive mb-4">
+                      <strong className="font-weight-bold">Resultados</strong>
+                    </h2>
+                    <MDBRow />
+                    <MDBTable responsiveSm>
+                      <MDBTableHead
+                        columns={data.columns}
+                        color="indigo"
+                        textWhite
+                      />
+                      <TableBody>
+                        {this.state.descuentos[0].agentesAus.map((item, i) => {
                           return (
                             <tr key={i}>
                               <td className="text-center">{item.legajo}</td>
@@ -83,15 +100,25 @@ class ResultPage extends React.Component {
                               <td className="text-center">{item.diasdesc}</td>
                             </tr>
                           );
-                        }
-                      })}
-                    </TableBody>
-                  </MDBTable>
-
-                  <button className="btn Ripple-parent btn-indigo top20">
-                    Descargar descuentos (.xlsx)
-                  </button>
-                </MDBCardBody>
+                        })}
+                      </TableBody>
+                    </MDBTable>
+                    <ExcelFile
+                      filename="Ausencias - 153"
+                      element={
+                        <button className="btn Ripple-parent btn-indigo top20">
+                          Descargar descuentos (.xlsx)
+                        </button>
+                      }
+                    >
+                      <ExcelSheet data={this.state.agentes} name="Employees">
+                        <ExcelColumn value="legajo" />
+                        <ExcelColumn value="0" />
+                        <ExcelColumn value="diasdesc" />
+                      </ExcelSheet>
+                    </ExcelFile>
+                  </MDBCardBody>
+                )}
               </MDBCol>
             </MDBRow>
           </MDBFreeBird>

@@ -34,7 +34,7 @@ class App extends Component {
     fileNovedades: null,
     fileAusencias: null,
     uploadValue: 0,
-    agente: []
+    mostrarResultados: false
   };
 
   toggleCollapse = collapseID => () =>

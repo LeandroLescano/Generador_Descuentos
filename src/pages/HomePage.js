@@ -20,7 +20,6 @@ class HomePage extends React.Component {
       }
     ],
     agente: [],
-    mostrarModal: false,
     resultados: false
   };
 
@@ -46,14 +45,6 @@ class HomePage extends React.Component {
             onUpload={this.handleChange}
           />
         )}
-        {/* {this.state.resultados && (
-          <Redirect
-            to={{
-              pathname: "/resultados",
-              state: { agentes: this.state.agente }
-            }}
-          />
-        )} */}
         {this.state.resultados && <ResultPage desc={this.state.descuentos} />}
       </>
     );

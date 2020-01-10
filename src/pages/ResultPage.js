@@ -172,12 +172,32 @@ class ResultPage extends React.Component {
                     {/* Boton para descargar el excel de las novedades */}
                     <ExcelFile
                       filename={
-                        "Descuento novedades - " +
+                        "Descuento horas novedades - " +
                         this.state.descuentos[0].numero
                       }
                       element={
                         <button className="btn Ripple-parent btn-indigo top20">
-                          Descargar descuentos novedades (.xlsx)
+                          Descargar descuentos horas novedades (.xlsx)
+                        </button>
+                      }
+                    >
+                      <ExcelSheet
+                        data={this.state.descuentos[0].agentesNov}
+                        name="Employees"
+                      >
+                        <ExcelColumn value="legajo" />
+                        <ExcelColumn value="default" />
+                        <ExcelColumn value="horasdesc" />
+                      </ExcelSheet>
+                    </ExcelFile>
+                    <ExcelFile
+                      filename={
+                        "Descuento dias novedades - " +
+                        this.state.descuentos[0].numero
+                      }
+                      element={
+                        <button className="btn Ripple-parent btn-indigo top20">
+                          Descargar descuentos días novedades (.xlsx)
                         </button>
                       }
                     >

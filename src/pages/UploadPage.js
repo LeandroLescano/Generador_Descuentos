@@ -226,7 +226,7 @@ class UploadPage extends React.Component {
                     horasDesc += 1;
                   }
                 }
-
+                horasDesc = horasDesc.toString().replace(",", ".");
                 let diasDesc = 0;
                 if (dias >= 1) {
                   diasDesc = dias;

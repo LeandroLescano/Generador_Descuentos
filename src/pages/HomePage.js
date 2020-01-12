@@ -19,7 +19,6 @@ class HomePage extends React.Component {
         agentesNov: []
       }
     ],
-    agente: [],
     resultados: false
   };
 

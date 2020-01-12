@@ -10,6 +10,7 @@ import {
 import "./HomePage.css";
 import firebase from "firebase";
 import Papa from "papaparse";
+import lodash from "lodash.clonedeep";
 
 class UploadPage extends React.Component {
   state = {
@@ -63,8 +64,7 @@ class UploadPage extends React.Component {
     let reader = new FileReader();
     reader.readAsDataURL(file);
 
-    var descuentos = JSON.parse(JSON.stringify(this.state.descuentos));
-    console.log(descuentos);
+    var descuentosAus = JSON.parse(JSON.stringify(this.state.descuentos));
     //22 - AUSENTE SIN AVISO O SIN JUSTIF
     //28 - FRANCO COMPENSATORIO SIN JUSTIFiCAR
     //42 - LICENCIA EXAMEN SIN JUSTIFICAR
@@ -81,14 +81,12 @@ class UploadPage extends React.Component {
           var i = 0;
           var keyAct = 0;
           var oficinaAct = rows[0][13];
-          descuentos[0] = {
+          descuentosAus[0] = {
             nombre: oficinaAct.substring(oficinaAct.indexOf("- ") + 8),
             numero: oficinaAct.substring(7, 10),
             agentesAus: [],
             agentesNov: []
           };
-          console.log(descuentos);
-          console.log("Nombre en inicio: " + descuentos[0].nombre);
           var legajoAct = rows[i][11];
           while (i < rows.length - 1) {
             var nuevo = null;
@@ -126,29 +124,35 @@ class UploadPage extends React.Component {
                 break;
               }
             }
-            if (nuevo !== null && tipo === "A") {
-              descuentos[0].agentesAus.push(nuevo);
-            } else if (nuevo !== null) {
-              descuentos[0].agentesNov.push(nuevo);
+            if (nuevo !== null) {
+              descuentosAus[0].agentesAus.push(nuevo);
             }
           }
         }
       },
       this.setState(
         {
-          descuentos: descuentos
+          descuentos: descuentosAus
         },
         () => {
-          this.props.onUpload(this.state.descuentos);
+          if (this.state.fileNovedades !== null) {
+            this.leerArchivoN(this.state.fileNovedades, "N", descuentosAus);
+          } else {
+            this.props.onUpload(this.state.descuentos);
+          }
         }
       )
     );
   };
 
-  leerArchivoN = (file, tipo) => {
+  leerArchivoN = (file, tipo, descuentoAnterior) => {
     let reader = new FileReader();
     reader.readAsDataURL(file);
-    var descuentos = JSON.parse(JSON.stringify(this.state.descuentos));
+    if (descuentoAnterior != null) {
+      var descuentosNov = Object.assign({}, descuentoAnterior);
+    } else {
+      var descuentosNov = [];
+    }
     //1 - LLEGADA TARDE
     //2 - SALIDA ANTICIPADA
     //3 - HORAS NO TRABAJADAS
@@ -159,22 +163,29 @@ class UploadPage extends React.Component {
       {
         complete: function(results) {
           var rows = results.data;
-          console.log(rows);
           var dias = -1;
           var i = 0;
           var keyAct = 0;
           var oficinaAct = rows[0][6];
-          descuentos[0] = {
-            nombre: "",
-            numero: oficinaAct.substring(
-              oficinaAct.indexOf("Oficina") + 8,
-              oficinaAct.indexOf("Oficina") + 11
-            ),
-            agentesAus: [],
-            agentesNov: []
-          };
-          console.log();
-          console.log(descuentos[0].nombre);
+
+          if (descuentoAnterior != null) {
+            descuentosNov[0] = {
+              nombre: descuentoAnterior[0].nombre,
+              numero: descuentoAnterior[0].numero,
+              agentesAus: descuentoAnterior[0].agentesAus,
+              agentesNov: []
+            };
+          } else {
+            descuentosNov[0] = {
+              nombre: "",
+              numero: oficinaAct.substring(
+                oficinaAct.indexOf("Oficina") + 8,
+                oficinaAct.indexOf("Oficina") + 11
+              ),
+              agentesAus: [],
+              agentesNov: []
+            };
+          }
           var legajoAct = rows[i][11];
           while (i < rows.length - 1) {
             var nuevo = null;
@@ -195,15 +206,11 @@ class UploadPage extends React.Component {
                   valor: rows[i][23], // Tiempo ej: 00:15
                   dias: parseInt(rows[i][18], 10)
                 });
-                console.log(novedadesAct);
                 if (codigoNov === "4") {
                   dias++;
                 } else {
                   let horasN = parseInt(rows[i][23].substring(0, 2)); //Primeras dos posiciones del String
                   let minutesN = parseInt(rows[i][23].substring(3, 5)); // Ultimas dos posiciones del string
-                  console.log(
-                    "horasN: " + horasN + ", " + "minutesN: " + minutesN
-                  );
                   horas.hora += horasN;
                   if (horas.min + minutesN > 59) {
                     horas.hora++;
@@ -252,17 +259,15 @@ class UploadPage extends React.Component {
                 break;
               }
             }
-            if (nuevo !== null && tipo === "A") {
-              descuentos[0].agentesAus.push(nuevo);
-            } else if (nuevo !== null) {
-              descuentos[0].agentesNov.push(nuevo);
+            if (nuevo !== null) {
+              descuentosNov[0].agentesNov.push(nuevo);
             }
           }
         }
       },
       this.setState(
         {
-          descuentos: descuentos
+          descuentos: descuentosNov
         },
         () => {
           this.props.onUpload(this.state.descuentos);
@@ -297,9 +302,7 @@ class UploadPage extends React.Component {
   generarDescuentos = () => {
     if (this.state.fileAusencias !== null) {
       this.leerArchivoA(this.state.fileAusencias, "A");
-    }
-
-    if (this.state.fileNovedades !== null) {
+    } else if (this.state.fileNovedades !== null) {
       this.leerArchivoN(this.state.fileNovedades, "N");
     }
   };

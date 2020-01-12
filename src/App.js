@@ -33,8 +33,7 @@ class App extends Component {
     nameAusencias: "",
     fileNovedades: null,
     fileAusencias: null,
-    uploadValue: 0,
-    mostrarResultados: false
+    uploadValue: 0
   };
 
   toggleCollapse = collapseID => () =>
@@ -45,6 +44,10 @@ class App extends Component {
   closeCollapse = collapseID => () => {
     window.scrollTo(0, 0);
     this.state.collapseID === collapseID && this.setState({ collapseID: "" });
+  };
+
+  recargar = () => {
+    window.location.reload();
   };
 
   render() {
@@ -64,7 +67,9 @@ class App extends Component {
           <MDBNavbar color="indigo" dark expand="md" fixed="top" scrolling>
             <MDBNavbarBrand href="/" className="py-0 font-weight-bold">
               <Logo style={{ height: "2.5rem", width: "2.5rem" }} />
-              <strong className="align-middle">Generador de descuentos</strong>
+              <strong className="align-middle" onClick={this.recargar}>
+                Generador de descuentos
+              </strong>
             </MDBNavbarBrand>
             <MDBNavbarToggler
               onClick={this.toggleCollapse("mainNavbarCollapse")}
@@ -74,7 +79,7 @@ class App extends Component {
               isOpen={this.state.collapseID}
               navbar
             >
-              <MDBNavbarNav right>
+              {/* <MDBNavbarNav right>
                 <MDBNavItem>
                   <MDBNavLink
                     exact
@@ -148,7 +153,7 @@ class App extends Component {
                     <strong>Addons</strong>
                   </MDBNavLink>
                 </MDBNavItem>
-              </MDBNavbarNav>
+              </MDBNavbarNav> */}
             </MDBCollapse>
           </MDBNavbar>
           {collapseID && overlay}

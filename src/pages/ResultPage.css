@@ -1,3 +1,11 @@
 .ResultHeader {
   height: 150px;
 }
+
+.arrowBack {
+  float: left;
+}
+
+.arrowBack:hover {
+  cursor: pointer;
+}

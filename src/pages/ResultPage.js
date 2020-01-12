@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  MDBEdgeHeader,
   MDBFreeBird,
   MDBContainer,
   MDBCol,
@@ -85,7 +84,6 @@ class ResultPage extends React.Component {
 
     return (
       <>
-        <MDBEdgeHeader color="indigo darken-3" className="ResultHeader" />
         <div className="mt-3 mb-5">
           <MDBFreeBird>
             <MDBRow>

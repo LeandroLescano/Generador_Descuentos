@@ -66,7 +66,7 @@ class App extends Component {
         <div className="flyout">
           <MDBNavbar color="indigo" dark expand="md" fixed="top" scrolling>
             <MDBNavbarBrand href="/" className="py-0 font-weight-bold">
-              <Logo style={{ height: "2.5rem", width: "2.5rem" }} />
+              {/* <Logo style={{ height: "2.5rem", width: "2.5rem" }} /> */}
               <strong className="align-middle" onClick={this.recargar}>
                 Generador de descuentos
               </strong>
@@ -79,8 +79,11 @@ class App extends Component {
               isOpen={this.state.collapseID}
               navbar
             >
-              {/* <MDBNavbarNav right>
+              <MDBNavbarNav right>
                 <MDBNavItem>
+                  <strong style={{ color: "white" }}>Versión Alpha 1.0</strong>
+                </MDBNavItem>
+                {/*<MDBNavItem>
                   <MDBNavLink
                     exact
                     to="/"
@@ -152,8 +155,8 @@ class App extends Component {
                   >
                     <strong>Addons</strong>
                   </MDBNavLink>
-                </MDBNavItem>
-              </MDBNavbarNav> */}
+                </MDBNavItem> */}
+              </MDBNavbarNav>
             </MDBCollapse>
           </MDBNavbar>
           {collapseID && overlay}
@@ -161,10 +164,12 @@ class App extends Component {
             <Routes />
           </main>
           <MDBFooter color="indigo">
-            <p className="footer-copyright mb-0 py-3 text-center">
-              &copy; {new Date().getFullYear()} Copyright: Lescano, Leandro
-              Nicolas{" "}
-            </p>
+            <div>
+              <p className="footer-copyright mb-0 py-3 text-center">
+                &copy; {new Date().getFullYear()} Copyright: Lescano, Leandro
+                Nicolas{" "}
+              </p>
+            </div>
           </MDBFooter>
         </div>
       </Router>

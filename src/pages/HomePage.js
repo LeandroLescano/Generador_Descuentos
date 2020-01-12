@@ -1,8 +1,8 @@
 import React from "react";
+import { MDBEdgeHeader } from "mdbreact";
 import "./HomePage.css";
 import UploadPage from "./UploadPage";
 import ResultPage from "./ResultPage";
-import { Redirect } from "react-router-dom";
 
 class HomePage extends React.Component {
   state = {
@@ -38,6 +38,7 @@ class HomePage extends React.Component {
   render() {
     return (
       <>
+        <MDBEdgeHeader color="indigo darken-3" className="sectionPage" />
         {!this.state.resultados && (
           <UploadPage
             agentes={this.state.agente}

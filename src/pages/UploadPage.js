@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  MDBEdgeHeader,
   MDBFreeBird,
   MDBContainer,
   MDBCol,
@@ -10,7 +9,6 @@ import {
 import "./HomePage.css";
 import firebase from "firebase";
 import Papa from "papaparse";
-import lodash from "lodash.clonedeep";
 
 class UploadPage extends React.Component {
   state = {
@@ -148,10 +146,11 @@ class UploadPage extends React.Component {
   leerArchivoN = (file, tipo, descuentoAnterior) => {
     let reader = new FileReader();
     reader.readAsDataURL(file);
+    var descuentosNov;
     if (descuentoAnterior != null) {
-      var descuentosNov = Object.assign({}, descuentoAnterior);
+      descuentosNov = Object.assign({}, descuentoAnterior);
     } else {
-      var descuentosNov = [];
+      descuentosNov = [];
     }
     //1 - LLEGADA TARDE
     //2 - SALIDA ANTICIPADA
@@ -310,7 +309,6 @@ class UploadPage extends React.Component {
   render() {
     return (
       <>
-        <MDBEdgeHeader color="indigo darken-3" className="sectionPage" />
         <div className="mt-3 mb-5">
           <MDBFreeBird>
             <MDBRow>

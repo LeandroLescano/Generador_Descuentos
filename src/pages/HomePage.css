@@ -52,8 +52,32 @@ a.border.nav-link.border-light.rounded.mr-1:hover {
   height: 100%;
   width: 100%;
   position: absolute;
-  background: url("https://mdbootstrap.com/wp-content/uploads/2016/12/big-bundle1.jpg");
+  background: url("https://i.ibb.co/9bCKfnG/Background-Page.png");
   background-position: center center;
   background-size: cover;
   filter: opacity(0.1);
+}
+
+.edge-header {
+  display: block;
+  height: 200px;
+  background-color: #ccc;
+}
+
+html::-webkit-scrollbar {
+  width: 0.7em;
+  position: absolute;
+  background: transparent;
+  overflow: overlay;
+}
+html::-webkit-scrollbar-thumb {
+  background: #2a3366;
+}
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html {
+  width: 100vw;
+  overflow-x: hidden;
 }

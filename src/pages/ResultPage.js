@@ -109,7 +109,7 @@ class ResultPage extends React.Component {
                         <h3 className="h3-responsive text-left mb-2">
                           <strong className="font-weight-bold">
                             {" "}
-                            Ausencias
+                            Ausencias {this.state.descuentos[0].numero}
                           </strong>
                         </h3>
                         <MDBTable responsiveSm>
@@ -165,7 +165,7 @@ class ResultPage extends React.Component {
                         <h3 className="h3-responsive text-left mb-2">
                           <strong className="font-weight-bold">
                             {" "}
-                            Novedades
+                            Novedades {this.state.descuentos[0].numero}
                           </strong>
                         </h3>
                         <MDBTable responsiveSm>

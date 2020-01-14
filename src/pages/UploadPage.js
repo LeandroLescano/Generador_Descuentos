@@ -63,53 +63,73 @@ class UploadPage extends React.Component {
     reader.readAsDataURL(file);
 
     var descuentosAus = JSON.parse(JSON.stringify(this.state.descuentos));
+    //20 - ENFERMEDAD SIN JUSTIFICAR
     //22 - AUSENTE SIN AVISO O SIN JUSTIF
     //28 - FRANCO COMPENSATORIO SIN JUSTIFiCAR
     //42 - LICENCIA EXAMEN SIN JUSTIFICAR
     //45 - LICENCIA ANUAL SIN JUSTIFICAR
     //46 - LIC.ESTUDIO UNIVERS S/JUSTIFICAR
+    //49 - EXCESO AUSENCIAS ENFERMEDAD
     //51 - EXCESO AUSENCIAS FAMILIAR ENF.
-    var codigosDesc = [22, 28, 42, 45, 46, 51];
+    var codigosDesc = [20, 22, 28, 42, 45, 46, 49, 51];
     Papa.parse(
       file,
       {
         complete: function(results) {
           var rows = results.data;
+          // var archivoAusencias = false;
+          // for (let x = 0; x < rows.length; x++) {
+          //   if (rows[0][x] === "Dias Corridos") {
+          //     archivoAusencias = true;
+          //   }
+          // }
+          // if (archivoAusencias) {
+          //   alert("ES UN ARCHIVO DE AUSENCIAS!");
+          // } else {
+          //   alert("NO ES UN ARCHIVO DE AUSENCIAS");
+          //   return;
+          // }
+
           var dias = 0;
           var i = 0;
           var keyAct = 0;
-          var oficinaAct = rows[0][13];
+          var x = 0;
+          while (rows[0][x] !== "Observaciones" && x < rows.length) {
+            x++;
+          }
+          var iObserv = x;
+          var oficinaAct = rows[0][iObserv + 3];
           descuentosAus[0] = {
             nombre: oficinaAct.substring(oficinaAct.indexOf("- ") + 8),
             numero: oficinaAct.substring(7, 10),
             agentesAus: [],
             agentesNov: []
           };
-          var legajoAct = rows[i][11];
+          var legajoAct = rows[i][iObserv + 1];
           while (i < rows.length - 1) {
             var nuevo = null;
             var ausenciasAct = [];
             dias = 0;
             keyAct = keyAct + 1;
-            legajoAct = rows[i][11];
+            legajoAct = rows[i][iObserv + 1];
 
-            while (legajoAct === rows[i][11]) {
-              let Novedad = rows[i][20];
+            while (legajoAct === rows[i][iObserv + 1]) {
+              let Novedad = rows[i][iObserv + 10];
               let codigoNov = Novedad.substring(0, Novedad.indexOf(" -"));
               if (codigosDesc.includes(parseInt(codigoNov))) {
                 ausenciasAct.push({
                   nombre: Novedad.substring(Novedad.indexOf("- ") + 2),
-                  fechai: rows[i][16],
-                  fechaf: rows[i][17],
-                  dias: parseInt(rows[i][18], 10)
+                  fechai: rows[i][15],
+                  fechaf: rows[i][16],
+                  dias: parseInt(rows[i][iObserv + 8], 10)
                 });
-                dias += parseInt(rows[i][18], 10);
+                dias += parseInt(rows[i][iObserv + 8], 10);
                 nuevo = JSON.parse(
                   JSON.stringify({
                     key: keyAct,
                     default: 0,
                     legajo: legajoAct.substring(3, legajoAct.indexOf(" -")),
-                    nombre: rows[i][12],
+                    nombre: rows[i][iObserv + 2],
                     diasdesc: dias,
                     ausencias: ausenciasAct
                   })
@@ -220,15 +240,15 @@ class UploadPage extends React.Component {
                 }
                 var horasDesc = horas.hora;
                 if (horasDesc <= 0) {
-                  if (horas.min > 15 && horas.min < 30) {
+                  if (horas.min > 15 && horas.min <= 30) {
                     horasDesc += 0.5;
-                  } else if (horas.min >= 30) {
+                  } else if (horas.min > 30) {
                     horasDesc += 1;
                   }
                 } else {
-                  if (horas.min > 0 && horas.min < 30) {
+                  if (horas.min > 0 && horas.min <= 30) {
                     horasDesc += 0.5;
-                  } else if (horas.min >= 30) {
+                  } else if (horas.min > 30) {
                     horasDesc += 1;
                   }
                 }
@@ -319,7 +339,7 @@ class UploadPage extends React.Component {
                 <MDBCardBody className="text-center">
                   <h2 className="h2-responsive mb-4">
                     <strong className="font-weight-bold">
-                      Subir archivos (.csv)
+                      Subir archivos misma oficina (.csv)
                     </strong>
                   </h2>
                   <MDBRow />

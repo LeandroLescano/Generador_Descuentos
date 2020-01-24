@@ -6,10 +6,9 @@ import {
   MDBNavbarToggler,
   MDBCollapse,
   MDBNavItem,
-  MDBFooter,
-  MDBNavLink
+  MDBFooter
 } from "mdbreact";
-import { ReactComponent as Logo } from "./assets/logo.svg";
+// import { ReactComponent as Logo } from "./assets/logo.svg";
 import { BrowserRouter as Router } from "react-router-dom";
 import Routes from "./Routes";
 import firebase from "firebase";

@@ -64,14 +64,54 @@ class UploadPage extends React.Component {
 
     var descuentosAus = JSON.parse(JSON.stringify(this.state.descuentos));
     //20 - ENFERMEDAD SIN JUSTIFICAR
+    //21 - FAMILIAR ENFERMO SIN JUSTIF
     //22 - AUSENTE SIN AVISO O SIN JUSTIF
     //28 - FRANCO COMPENSATORIO SIN JUSTIFiCAR
     //42 - LICENCIA EXAMEN SIN JUSTIFICAR
+    //43
     //45 - LICENCIA ANUAL SIN JUSTIFICAR
     //46 - LIC.ESTUDIO UNIVERS S/JUSTIFICAR
+    //47
+    //48
+    //53 lic matrimonio sin justif
+    //55
+    //32/100 - Nac Hijo sin justificar
+    //60 dona sangre sin justif
+    //64
+    //117
+    //122
+    //133
+    //150 lic esp sin justif
+    //203
+
+    // -- CODIGOS DE EXCESOS EXENFAMIL Y EXENFER -- s
     //49 - EXCESO AUSENCIAS ENFERMEDAD
     //51 - EXCESO AUSENCIAS FAMILIAR ENF.
-    var codigosDesc = [20, 22, 28, 42, 45, 46, 49, 51];
+    var codigosDesc = [
+      20,
+      21,
+      22,
+      28,
+      32,
+      42,
+      43,
+      45,
+      46,
+      47,
+      48,
+      49,
+      51,
+      53,
+      55,
+      60,
+      64,
+      100,
+      117,
+      122,
+      133,
+      150,
+      203
+    ];
     Papa.parse(
       file,
       {
@@ -99,6 +139,7 @@ class UploadPage extends React.Component {
           }
           var iObserv = x;
           var oficinaAct = rows[0][iObserv + 3];
+          console.log(oficinaAct);
           descuentosAus[0] = {
             nombre: oficinaAct.substring(oficinaAct.indexOf("- ") + 8),
             numero: oficinaAct.substring(7, 10),
@@ -118,6 +159,7 @@ class UploadPage extends React.Component {
               let codigoNov = Novedad.substring(0, Novedad.indexOf(" -"));
               if (codigosDesc.includes(parseInt(codigoNov))) {
                 ausenciasAct.push({
+                  codigo: codigoNov,
                   nombre: Novedad.substring(Novedad.indexOf("- ") + 2),
                   fechai: rows[i][15],
                   fechaf: rows[i][16],
@@ -127,10 +169,10 @@ class UploadPage extends React.Component {
                 nuevo = JSON.parse(
                   JSON.stringify({
                     key: keyAct,
-                    default: 0,
+                    default: "0",
                     legajo: legajoAct.substring(3, legajoAct.indexOf(" -")),
-                    nombre: rows[i][iObserv + 2],
-                    diasdesc: dias,
+                    nombre: rows[i][iObserv + 2].replace("�", "Ñ"),
+                    diasdesc: dias.toString(),
                     ausencias: ausenciasAct
                   })
                 );
@@ -342,6 +384,7 @@ class UploadPage extends React.Component {
                       Subir archivos misma oficina (.csv)
                     </strong>
                   </h2>
+
                   <MDBRow />
                   <MDBRow className="d-flex flex-row justify-content-center row">
                     <button

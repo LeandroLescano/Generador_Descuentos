@@ -10,12 +10,8 @@ import {
   MDBTableHead
 } from "mdbreact";
 import "./ResultPage.css";
-import ReactExport from "react-export-excel";
 import Loading from "../components/loading";
-
-const ExcelFile = ReactExport.ExcelFile;
-const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
-const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
+import { CSVLink } from "react-csv";
 
 class ResultPage extends React.Component {
   state = {
@@ -137,28 +133,77 @@ class ResultPage extends React.Component {
                           </TableBody>
                         </MDBTable>
                         {/* Boton para descargar el excel de las ausencias */}
-                        <ExcelFile
+                        <CSVLink
+                          data={this.state.descuentos[0].agentesAus.slice(1)}
+                          headers={[
+                            {
+                              label: this.state.descuentos[0].agentesAus[0]
+                                .legajo,
+                              key: "legajo"
+                            },
+                            {
+                              label: this.state.descuentos[0].agentesAus[0]
+                                .default,
+                              key: "default"
+                            },
+                            {
+                              label: this.state.descuentos[0].agentesAus[0]
+                                .diasdesc,
+                              key: "diasdesc"
+                            }
+                          ]}
+                          enclosingCharacter={``}
                           filename={
                             "Descuento ausencias - " +
-                            this.state.descuentos[0].numero
+                            this.state.descuentos[0].numero +
+                            ".csv"
                           }
-                          element={
-                            <button className="btn Ripple-parent btn-indigo top20">
-                              Descargar descuentos ausencias (.xlsx)
-                            </button>
-                          }
+                          target="_blank"
                         >
-                          <ExcelSheet
-                            data={this.state.descuentos[0].agentesAus}
-                            name="Employees"
+                          <button className="btn Ripple-parent btn-indigo top20">
+                            Descargar descuentos ausencias (.csv)
+                          </button>
+                        </CSVLink>
+                        {this.state.descuentos[0].agentesAus.filter(
+                          agent => agent.ausencias.codigo === "49"
+                        ).length > 0 && (
+                          <CSVLink
+                            data={this.state.descuentos[0].agentesNov
+                              .filter(agent => agent.diasdesc >= 1)
+                              .slice(1)}
+                            headers={[
+                              {
+                                label: this.state.descuentos[0].agentesAus[0]
+                                  .legajo,
+                                key: "legajo"
+                              },
+                              {
+                                label: this.state.descuentos[0].agentesAus[0]
+                                  .default,
+                                key: "default"
+                              },
+                              {
+                                label: this.state.descuentos[0].agentesAus[0]
+                                  .diasdesc,
+                                key: "diasdesc"
+                              }
+                            ]}
+                            enclosingCharacter={``}
+                            filename={
+                              "Descuento dias exceso enfermedad - " +
+                              this.state.descuentos[0].numero +
+                              ".csv"
+                            }
+                            target="_blank"
                           >
-                            <ExcelColumn value="legajo" />
-                            <ExcelColumn value="default" />
-                            <ExcelColumn value="diasdesc" />
-                          </ExcelSheet>
-                        </ExcelFile>
+                            <button className="btn Ripple-parent btn-indigo top20">
+                              Descargar descuentos exceso enfermedad (.csv)
+                            </button>
+                          </CSVLink>
+                        )}
                       </>
                     )}
+
                     {/* Listado de novedades */}
                     {this.state.descuentos[0].agentesNov.length > 0 && (
                       <>
@@ -196,50 +241,76 @@ class ResultPage extends React.Component {
                           </TableBody>
                         </MDBTable>
                         {/* Boton para descargar el excel de las novedades */}
-                        <ExcelFile
+                        <CSVLink
+                          data={this.state.descuentos[0].agentesNov
+                            .filter(agent => agent.horasdesc >= 0.5)
+                            .slice(1)}
+                          headers={[
+                            {
+                              label: this.state.descuentos[0].agentesNov[0]
+                                .legajo,
+                              key: "legajo"
+                            },
+                            {
+                              label: this.state.descuentos[0].agentesNov[0]
+                                .default,
+                              key: "default"
+                            },
+                            {
+                              label: this.state.descuentos[0].agentesNov[0]
+                                .horasdesc,
+                              key: "horasdesc"
+                            }
+                          ]}
+                          enclosingCharacter={``}
                           filename={
                             "Descuento horas novedades - " +
-                            this.state.descuentos[0].numero
+                            this.state.descuentos[0].numero +
+                            ".csv"
                           }
-                          element={
-                            <button className="btn Ripple-parent btn-indigo top20">
-                              Descargar descuentos horas novedades (.xlsx)
-                            </button>
-                          }
+                          target="_blank"
                         >
-                          <ExcelSheet
-                            data={this.state.descuentos[0].agentesNov.filter(
-                              agent => agent.horasdesc >= 0.5
-                            )}
-                            name="Employees"
+                          <button className="btn Ripple-parent btn-indigo top20">
+                            Descargar descuentos horas novedades (.csv)
+                          </button>
+                        </CSVLink>
+                        {this.state.descuentos[0].agentesNov.filter(
+                          agent => agent.diasdesc >= 1
+                        ).length > 0 && (
+                          <CSVLink
+                            data={this.state.descuentos[0].agentesNov
+                              .filter(agent => agent.diasdesc >= 1)
+                              .slice(1)}
+                            headers={[
+                              {
+                                label: this.state.descuentos[0].agentesNov[0]
+                                  .legajo,
+                                key: "legajo"
+                              },
+                              {
+                                label: this.state.descuentos[0].agentesNov[0]
+                                  .default,
+                                key: "default"
+                              },
+                              {
+                                label: this.state.descuentos[0].agentesNov[0]
+                                  .diasdesc,
+                                key: "diasdesc"
+                              }
+                            ]}
+                            enclosingCharacter={``}
+                            filename={
+                              "Descuento dias novedades - " +
+                              this.state.descuentos[0].numero +
+                              ".csv"
+                            }
+                            target="_blank"
                           >
-                            <ExcelColumn value="legajo" />
-                            <ExcelColumn value="default" />
-                            <ExcelColumn value="horasdesc" />
-                          </ExcelSheet>
-                        </ExcelFile>
-                        <ExcelFile
-                          filename={
-                            "Descuento dias novedades - " +
-                            this.state.descuentos[0].numero
-                          }
-                          element={
                             <button className="btn Ripple-parent btn-indigo top20">
-                              Descargar descuentos días novedades (.xlsx)
+                              Descargar descuentos días novedades (.csv)
                             </button>
-                          }
-                        >
-                          <ExcelSheet
-                            data={this.state.descuentos[0].agentesNov.filter(
-                              agent => agent.diasdesc >= 1
-                            )}
-                            name="Employees"
-                          >
-                            <ExcelColumn value="legajo" />
-                            <ExcelColumn value="default" />
-                            <ExcelColumn value="diasdesc" />
-                          </ExcelSheet>
-                        </ExcelFile>
+                          </CSVLink>
+                        )}
                       </>
                     )}
                   </MDBCardBody>

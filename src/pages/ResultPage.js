@@ -7,7 +7,8 @@ import {
   MDBCardBody,
   MDBTable,
   TableBody,
-  MDBTableHead
+  MDBTableHead,
+  MDBBtn
 } from "mdbreact";
 import "./ResultPage.css";
 import Loading from "../components/loading";
@@ -41,7 +42,6 @@ class ResultPage extends React.Component {
   recargar = () => {
     window.location.reload();
   };
-
   render() {
     const data = {
       columns: [
@@ -56,6 +56,14 @@ class ResultPage extends React.Component {
         {
           label: "Días a descuento",
           field: "heading1"
+        },
+        {
+          label: "Días exceso enfermedad",
+          field: "heading2"
+        },
+        {
+          label: "Días exceso familiar enf.",
+          field: "heading3"
         }
       ],
       columnsN: [
@@ -126,6 +134,12 @@ class ResultPage extends React.Component {
                                     <td className="text-center">
                                       {item.diasdesc}
                                     </td>
+                                    <td className="text-center">
+                                      {item.diasexenfer}
+                                    </td>
+                                    <td className="text-center">
+                                      {item.diasexenfamil}
+                                    </td>
                                   </tr>
                                 );
                               }
@@ -164,28 +178,34 @@ class ResultPage extends React.Component {
                             Descargar descuentos ausencias (.csv)
                           </button>
                         </CSVLink>
+
+                        {/* BOTON LISTADO AUSENCIAS ENFERMEDAD (49) */}
+
                         {this.state.descuentos[0].agentesAus.filter(
-                          agent => agent.ausencias.codigo === "49"
+                          agent => agent.diasexenfer > 0
                         ).length > 0 && (
                           <CSVLink
-                            data={this.state.descuentos[0].agentesNov
-                              .filter(agent => agent.diasdesc >= 1)
+                            data={this.state.descuentos[0].agentesAus
+                              .filter(agent => agent.diasexenfer > 0)
                               .slice(1)}
                             headers={[
                               {
-                                label: this.state.descuentos[0].agentesAus[0]
-                                  .legajo,
+                                label: this.state.descuentos[0].agentesAus.filter(
+                                  agent => agent.diasexenfer > 0
+                                ).legajo,
                                 key: "legajo"
                               },
                               {
-                                label: this.state.descuentos[0].agentesAus[0]
-                                  .default,
+                                label: this.state.descuentos[0].agentesAus.filter(
+                                  agent => agent.diasexenfer > 0
+                                ).default,
                                 key: "default"
                               },
                               {
-                                label: this.state.descuentos[0].agentesAus[0]
-                                  .diasdesc,
-                                key: "diasdesc"
+                                label: this.state.descuentos[0].agentesAus.filter(
+                                  agent => agent.diasexenfer > 0
+                                ).diasexenfer,
+                                key: "diasexenfer"
                               }
                             ]}
                             enclosingCharacter={``}
@@ -198,6 +218,49 @@ class ResultPage extends React.Component {
                           >
                             <button className="btn Ripple-parent btn-indigo top20">
                               Descargar descuentos exceso enfermedad (.csv)
+                            </button>
+                          </CSVLink>
+                        )}
+
+                        {/* BOTON LISTADO AUSENCIAS FAMILIAR ENFERMO (51) */}
+
+                        {this.state.descuentos[0].agentesAus.filter(
+                          agent => agent.diasexenfamil > 0
+                        ).length > 0 && (
+                          <CSVLink
+                            data={this.state.descuentos[0].agentesAus
+                              .filter(agent => agent.diasexenfamil > 0)
+                              .slice(1)}
+                            headers={[
+                              {
+                                label: this.state.descuentos[0].agentesAus.filter(
+                                  agent => agent.diasexenfamil > 0
+                                )[0].legajo,
+                                key: "legajo"
+                              },
+                              {
+                                label: this.state.descuentos[0].agentesAus.filter(
+                                  agent => agent.diasexenfamil > 0
+                                )[0].default,
+                                key: "default"
+                              },
+                              {
+                                label: this.state.descuentos[0].agentesAus.filter(
+                                  agent => agent.diasexenfamil > 0
+                                )[0].diasexenfamil,
+                                key: "diasexenfamil"
+                              }
+                            ]}
+                            enclosingCharacter={``}
+                            filename={
+                              "Descuento dias exceso familiar enf. - " +
+                              this.state.descuentos[0].numero +
+                              ".csv"
+                            }
+                            target="_blank"
+                          >
+                            <button className="btn Ripple-parent btn-indigo top20">
+                              Descargar descuentos exceso familiar enf. (.csv)
                             </button>
                           </CSVLink>
                         )}

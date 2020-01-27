@@ -130,7 +130,9 @@ class UploadPage extends React.Component {
           //   return;
           // }
 
-          var dias = 0;
+          var dias = 0,
+            diasenfer = 0,
+            diasfamil = 0;
           var i = 0;
           var keyAct = 0;
           var x = 0;
@@ -151,6 +153,8 @@ class UploadPage extends React.Component {
             var nuevo = null;
             var ausenciasAct = [];
             dias = 0;
+            diasenfer = 0;
+            diasfamil = 0;
             keyAct = keyAct + 1;
             legajoAct = rows[i][iObserv + 1];
 
@@ -165,7 +169,13 @@ class UploadPage extends React.Component {
                   fechaf: rows[i][16],
                   dias: parseInt(rows[i][iObserv + 8], 10)
                 });
-                dias += parseInt(rows[i][iObserv + 8], 10);
+                if (codigoNov === "49") {
+                  diasenfer += parseInt(rows[i][iObserv + 8], 10);
+                } else if (codigoNov === "51") {
+                  diasfamil += parseInt(rows[i][iObserv + 8], 10);
+                } else {
+                  dias += parseInt(rows[i][iObserv + 8], 10);
+                }
                 nuevo = JSON.parse(
                   JSON.stringify({
                     key: keyAct,
@@ -173,6 +183,8 @@ class UploadPage extends React.Component {
                     legajo: legajoAct.substring(3, legajoAct.indexOf(" -")),
                     nombre: rows[i][iObserv + 2].replace("�", "Ñ"),
                     diasdesc: dias.toString(),
+                    diasexenfer: diasenfer.toString(),
+                    diasexenfamil: diasfamil.toString(),
                     ausencias: ausenciasAct
                   })
                 );

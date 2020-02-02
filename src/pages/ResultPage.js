@@ -13,6 +13,8 @@ import {
 import "./ResultPage.css";
 import Loading from "../components/loading";
 import { CSVLink } from "react-csv";
+import { Toast } from "react-bootstrap";
+import { useState } from "react";
 
 class ResultPage extends React.Component {
   state = {
@@ -24,7 +26,8 @@ class ResultPage extends React.Component {
         agentesNov: []
       }
     ],
-    loaded: false
+    loaded: false,
+    showToast: false
   };
 
   componentDidMount = () => {
@@ -34,9 +37,23 @@ class ResultPage extends React.Component {
           descuentos: this.props.desc,
           loaded: true
         });
+        if (
+          this.state.descuentos[0].agentesNov.filter(
+            agent => agent.diasdesc > 0
+          ).length > 0 &&
+          this.state.descuentos[0].agentesAus.length > 0
+        ) {
+          this.toggleToast();
+        }
       }.bind(this),
       2000
     );
+  };
+
+  toggleToast = () => {
+    this.setState({
+      showToast: !this.state.showToast
+    });
   };
 
   recargar = () => {
@@ -148,7 +165,9 @@ class ResultPage extends React.Component {
                         </MDBTable>
                         {/* Boton para descargar el excel de las ausencias */}
                         <CSVLink
-                          data={this.state.descuentos[0].agentesAus.slice(1)}
+                          data={this.state.descuentos[0].agentesAus
+                            .filter(agent => agent.diasdesc > 0)
+                            .slice(1)}
                           headers={[
                             {
                               label: this.state.descuentos[0].agentesAus[0]
@@ -310,18 +329,21 @@ class ResultPage extends React.Component {
                             .slice(1)}
                           headers={[
                             {
-                              label: this.state.descuentos[0].agentesNov[0]
-                                .legajo,
+                              label: this.state.descuentos[0].agentesNov.filter(
+                                agent => agent.horasdesc >= 0.5
+                              )[0].legajo,
                               key: "legajo"
                             },
                             {
-                              label: this.state.descuentos[0].agentesNov[0]
-                                .default,
+                              label: this.state.descuentos[0].agentesNov.filter(
+                                agent => agent.horasdesc >= 0.5
+                              )[0].default,
                               key: "default"
                             },
                             {
-                              label: this.state.descuentos[0].agentesNov[0]
-                                .horasdesc,
+                              label: this.state.descuentos[0].agentesNov.filter(
+                                agent => agent.horasdesc >= 0.5
+                              )[0].horasdesc,
                               key: "horasdesc"
                             }
                           ]}
@@ -346,18 +368,21 @@ class ResultPage extends React.Component {
                               .slice(1)}
                             headers={[
                               {
-                                label: this.state.descuentos[0].agentesNov[0]
-                                  .legajo,
+                                label: this.state.descuentos[0].agentesNov.filter(
+                                  agent => agent.diasdesc >= 1
+                                )[0].legajo,
                                 key: "legajo"
                               },
                               {
-                                label: this.state.descuentos[0].agentesNov[0]
-                                  .default,
+                                label: this.state.descuentos[0].agentesNov.filter(
+                                  agent => agent.diasdesc >= 1
+                                )[0].default,
                                 key: "default"
                               },
                               {
-                                label: this.state.descuentos[0].agentesNov[0]
-                                  .diasdesc,
+                                label: this.state.descuentos[0].agentesNov.filter(
+                                  agent => agent.diasdesc >= 1
+                                )[0].diasdesc,
                                 key: "diasdesc"
                               }
                             ]}
@@ -382,6 +407,19 @@ class ResultPage extends React.Component {
             </MDBRow>
           </MDBFreeBird>
           <MDBContainer></MDBContainer>
+          <Toast
+            show={this.state.showToast}
+            onClose={this.toggleToast}
+            className="toast-place"
+          >
+            <Toast.Header>
+              <strong className="mr-auto">Omisiones de fichada</strong>
+            </Toast.Header>
+            <Toast.Body>
+              Los descuentos por omisiones de fichada fueron sumados en el
+              archivo de ausencias.
+            </Toast.Body>
+          </Toast>
         </div>
       </>
     );

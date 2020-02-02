@@ -9,3 +9,15 @@
 .arrowBack:hover {
   cursor: pointer;
 }
+
+.text-novinfo {
+  margin-top: -29px;
+  margin-left: 170px;
+  margin-bottom: 5px;
+}
+
+.toast-place {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}

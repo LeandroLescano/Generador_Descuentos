@@ -17,7 +17,37 @@
 }
 
 .toast-place {
-  position: absolute;
+  position: fixed;
   right: 0;
-  bottom: 0;
+  bottom: 10px;
+}
+
+.toast-pf {
+  background-color: #fff;
+  border-color: #bbb;
+  box-shadow: 0 2px 6px rgba(3, 3, 3, 0.2);
+  padding-left: 68px;
+  margin-bottom: 5px;
+}
+
+.alert-dismissable {
+  padding-right: 28px;
+}
+
+.alert {
+  border-width: 1px;
+  padding-left: 47px;
+  padding-right: 14px;
+  word-wrap: break-word;
+}
+
+.alert-warning {
+  color: #363636;
+  background-color: #fdf2e5;
+  border-color: #ec7a08;
+}
+
+.img-toast {
+  margin: 0 8px 0 0;
+  height: 20px;
 }

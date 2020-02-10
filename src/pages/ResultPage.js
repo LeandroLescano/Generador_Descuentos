@@ -7,8 +7,7 @@ import {
   MDBCardBody,
   MDBTable,
   TableBody,
-  MDBTableHead,
-  MDBBtn
+  MDBTableHead
 } from "mdbreact";
 import "./ResultPage.css";
 import Loading from "../components/loading";
@@ -33,21 +32,24 @@ class ResultPage extends React.Component {
   componentDidMount = () => {
     setTimeout(
       function() {
+        this.checkOmisionesF();
         this.setState({
           descuentos: this.props.desc,
           loaded: true
         });
-        if (
-          this.state.descuentos[0].agentesNov.filter(
-            agent => agent.diasdesc > 0
-          ).length > 0 &&
-          this.state.descuentos[0].agentesAus.length > 0
-        ) {
-          this.toggleToast();
-        }
       }.bind(this),
       2000
     );
+  };
+
+  checkOmisionesF = () => {
+    if (
+      this.props.desc[0].agentesNov.filter(agent => agent.diasdesc > 0).length >
+        0 &&
+      this.props.desc[0].agentesAus.length > 0
+    ) {
+      this.toggleToast();
+    }
   };
 
   toggleToast = () => {
@@ -56,9 +58,16 @@ class ResultPage extends React.Component {
     });
   };
 
+  offToast = () => {
+    this.setState({
+      showToast: false
+    });
+  };
+
   recargar = () => {
     window.location.reload();
   };
+
   render() {
     const data = {
       columns: [
@@ -289,7 +298,7 @@ class ResultPage extends React.Component {
                     {/* Listado de novedades */}
                     {this.state.descuentos[0].agentesNov.length > 0 && (
                       <>
-                        <h3 className="h3-responsive text-left mb-2">
+                        <h3 className="h3-responsive text-left mb-2 mt-3">
                           <strong className="font-weight-bold">
                             {" "}
                             Novedades {this.state.descuentos[0].numero}
@@ -359,7 +368,7 @@ class ResultPage extends React.Component {
                             Descargar descuentos horas novedades (.csv)
                           </button>
                         </CSVLink>
-                        {this.state.descuentos[0].agentesNov.filter(
+                        {/* {this.state.descuentos[0].agentesNov.filter(
                           agent => agent.diasdesc >= 1
                         ).length > 0 && (
                           <CSVLink
@@ -398,7 +407,7 @@ class ResultPage extends React.Component {
                               Descargar descuentos días novedades (.csv)
                             </button>
                           </CSVLink>
-                        )}
+                        )} */}
                       </>
                     )}
                   </MDBCardBody>
@@ -407,19 +416,26 @@ class ResultPage extends React.Component {
             </MDBRow>
           </MDBFreeBird>
           <MDBContainer></MDBContainer>
-          <Toast
-            show={this.state.showToast}
-            onClose={this.toggleToast}
-            className="toast-place"
-          >
-            <Toast.Header>
-              <strong className="mr-auto">Omisiones de fichada</strong>
-            </Toast.Header>
-            <Toast.Body>
-              Los descuentos por omisiones de fichada fueron sumados en el
-              archivo de ausencias.
-            </Toast.Body>
-          </Toast>
+          {this.state.showToast && (
+            <Toast
+              show={this.state.showToast}
+              onClose={this.toggleToast}
+              className="toast-place"
+            >
+              <Toast.Header>
+                <img
+                  src="https://image.flaticon.com/icons/svg/595/595067.svg"
+                  className="img-toast"
+                  alt="Warn"
+                ></img>
+                <strong className="mr-auto">Omisiones de fichada</strong>
+              </Toast.Header>
+              <Toast.Body>
+                Los descuentos por omisiones de fichada fueron sumados en el
+                archivo de ausencias.
+              </Toast.Body>
+            </Toast>
+          )}
         </div>
       </>
     );

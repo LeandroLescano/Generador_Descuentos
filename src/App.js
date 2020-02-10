@@ -164,10 +164,23 @@ class App extends Component {
           </main>
           <MDBFooter color="indigo">
             <div>
-              <p className="footer-copyright mb-0 py-3 text-center">
+              <p className="footer-copyright mb-0 pb-0 pt-2 text-center">
                 &copy; {new Date().getFullYear()} Copyright: Lescano, Leandro
                 Nicolas{" "}
               </p>
+              <div className="footer-copyright mb-0 pb-2 pt-0 text-center">
+                Icons made by{" "}
+                <a
+                  href="https://www.flaticon.com/authors/freepik"
+                  title="Freepik"
+                >
+                  Freepik
+                </a>{" "}
+                from{" "}
+                <a href="https://www.flaticon.com/" title="Flaticon">
+                  www.flaticon.com
+                </a>
+              </div>
             </div>
           </MDBFooter>
         </div>

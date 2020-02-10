@@ -4,7 +4,12 @@ import {
   MDBContainer,
   MDBCol,
   MDBRow,
-  MDBCardBody
+  MDBCardBody,
+  MDBModal,
+  MDBModalBody,
+  MDBModalHeader,
+  MDBBtn,
+  MDBModalFooter
 } from "mdbreact";
 import "./HomePage.css";
 import firebase from "firebase";
@@ -19,6 +24,9 @@ class UploadPage extends React.Component {
     fileNovedades: null,
     fileAusencias: null,
     uploadValue: 0,
+    modal1: false,
+    modal2: false,
+    modal3: false,
     descuentos: [
       {
         nombre: "",
@@ -29,7 +37,12 @@ class UploadPage extends React.Component {
     ]
   };
 
+  recargar = () => {
+    window.location.reload();
+  };
+
   scrollToTop = () => window.scrollTo(0, 0);
+
   handleClick = e => {
     this.setState({
       typeFile: e.target.value
@@ -84,7 +97,7 @@ class UploadPage extends React.Component {
     //150 lic esp sin justif
     //203
 
-    // -- CODIGOS DE EXCESOS EXENFAMIL Y EXENFER -- s
+    // -- CODIGOS DE EXCESOS EXENFAMIL Y EXENFER --
     //49 - EXCESO AUSENCIAS ENFERMEDAD
     //51 - EXCESO AUSENCIAS FAMILIAR ENF.
     var codigosDesc = [
@@ -117,19 +130,6 @@ class UploadPage extends React.Component {
       {
         complete: function(results) {
           var rows = results.data;
-          // var archivoAusencias = false;
-          // for (let x = 0; x < rows.length; x++) {
-          //   if (rows[0][x] === "Dias Corridos") {
-          //     archivoAusencias = true;
-          //   }
-          // }
-          // if (archivoAusencias) {
-          //   alert("ES UN ARCHIVO DE AUSENCIAS!");
-          // } else {
-          //   alert("NO ES UN ARCHIVO DE AUSENCIAS");
-          //   return;
-          // }
-
           var dias = 0,
             diasenfer = 0,
             diasfamil = 0;
@@ -141,7 +141,6 @@ class UploadPage extends React.Component {
           }
           var iObserv = x;
           var oficinaAct = rows[0][iObserv + 3];
-          console.log(oficinaAct);
           descuentosAus[0] = {
             nombre: oficinaAct.substring(oficinaAct.indexOf("- ") + 8),
             numero: oficinaAct.substring(7, 10),
@@ -223,9 +222,12 @@ class UploadPage extends React.Component {
     var descuentosNov;
     if (descuentoAnterior != null) {
       descuentosNov = Object.assign({}, descuentoAnterior);
+      console.log("asigna3");
     } else {
       descuentosNov = [];
     }
+    console.log(descuentoAnterior);
+    console.log(descuentosNov);
     //1 - LLEGADA TARDE
     //2 - SALIDA ANTICIPADA
     //3 - HORAS NO TRABAJADAS
@@ -315,11 +317,11 @@ class UploadPage extends React.Component {
                   nuevo = JSON.parse(
                     JSON.stringify({
                       key: keyAct,
-                      default: 0,
+                      default: "0",
                       legajo: legajoAct,
-                      nombre: rows[i][16].substring(11),
-                      diasdesc: diasDesc,
-                      horasdesc: horasDesc,
+                      nombre: rows[i][16].substring(11).replace("�", "Ñ"),
+                      diasdesc: diasDesc.toString(),
+                      horasdesc: horasDesc.toString(),
                       novedades: novedadesAct
                     })
                   );
@@ -333,6 +335,19 @@ class UploadPage extends React.Component {
               }
             }
             if (nuevo !== null) {
+              let indexAgent = descuentosNov[0].agentesAus.findIndex(
+                // eslint-disable-next-line
+                agent => agent.legajo === nuevo.legajo
+              );
+              if (indexAgent !== -1 && nuevo.diasdesc > 0) {
+                descuentosNov[0].agentesAus[indexAgent].diasdesc +=
+                  nuevo.diasdesc;
+              } else if (nuevo.diasdesc > 0) {
+                descuentosNov[0].agentesAus.push(nuevo);
+                descuentosNov[0].agentesAus.sort(function(a, b) {
+                  return a.legajo - b.legajo;
+                });
+              }
               descuentosNov[0].agentesNov.push(nuevo);
             }
           }
@@ -372,12 +387,92 @@ class UploadPage extends React.Component {
     );
   };
 
+  // generarDescuentos = () => {
+  //   if (
+  //     (this.state.fileAusencias !== null &&
+  //       this.state.fileAusencias.type !== "application/vnd.ms-excel") ||
+  //     (this.state.fileNovedades !== null &&
+  //       this.state.fileNovedades.type !== "application/vnd.ms-excel")
+  //   ) {
+  //     this.toggleModal(1)();
+  //   } else if (this.state.fileAusencias !== null) {
+  //     let archivoAusencias = false;
+  //     let archivoNovedades = false;
+  //     Papa.parse(this.state.fileAusencias, {
+  //       step: function(results, parser) {
+  //         var rows = results.data;
+  //         for (var x = 0; x < rows.length; x++) {
+  //           if (rows[x] === "Dias Corridos") {
+  //             archivoAusencias = true;
+  //             parser.abort();
+  //           }
+  //         }
+  //       }
+  //     });
+  //     if (this.state.fileNovedades !== null) {
+  //       Papa.parse(this.state.fileNovedades, {
+  //         step: function(results, parser) {
+  //           var rows = results.data;
+  //           for (var x = 0; x < rows.length; x++) {
+  //             if (rows[x] === "Valor") {
+  //               archivoNovedades = true;
+  //               parser.abort();
+  //             }
+  //           }
+  //         }
+  //       });
+  //     }
+  //     setTimeout(
+  //       function() {
+  //         if (!archivoNovedades && this.state.fileNovedades !== null) {
+  //           this.toggleModal(3)();
+  //         } else if (!archivoAusencias) {
+  //           this.toggleModal(2)();
+  //         } else {
+  //           this.leerArchivoA(this.state.fileAusencias, "A");
+  //         }
+  //       }.bind(this),
+  //       10
+  //     );
+  //   } else if (this.state.fileNovedades !== null) {
+  //     let archivoNovedades = false;
+  //     Papa.parse(this.state.fileNovedades, {
+  //       step: function(results, parser) {
+  //         var rows = results.data;
+  //         for (var x = 0; x < rows.length; x++) {
+  //           if (rows[x] === "Valor") {
+  //             archivoNovedades = true;
+  //             parser.abort();
+  //           }
+  //         }
+  //       }
+  //     });
+  //     setTimeout(
+  //       function() {
+  //         if (archivoNovedades) {
+  //           this.leerArchivoN(this.state.fileNovedades, "N");
+  //         } else {
+  //           this.toggleModal(3)();
+  //         }
+  //       }.bind(this),
+  //       5
+  //     );
+  //   }
+  // };
+
   generarDescuentos = () => {
     if (this.state.fileAusencias !== null) {
       this.leerArchivoA(this.state.fileAusencias, "A");
     } else if (this.state.fileNovedades !== null) {
       this.leerArchivoN(this.state.fileNovedades, "N");
     }
+  };
+
+  toggleModal = num => () => {
+    let modalNumber = "modal" + num;
+    this.setState({
+      [modalNumber]: !this.state[modalNumber]
+    });
   };
 
   render() {
@@ -440,7 +535,59 @@ class UploadPage extends React.Component {
               </MDBCol>
             </MDBRow>
           </MDBFreeBird>
-          <MDBContainer></MDBContainer>
+          <MDBContainer>
+            <MDBModal isOpen={this.state.modal1} toggle={this.toggleModal(1)}>
+              <MDBModalHeader toggle={this.toggleModal(1)}>
+                Ha ocurrido un problema
+              </MDBModalHeader>
+              <MDBModalBody>
+                El o los archivos elegidos no corresponden a un
+                <strong> archivo .CSV</strong>, por favor intente nuevamente.
+              </MDBModalBody>
+              <MDBModalFooter>
+                <MDBBtn color="indigo" onClick={this.toggleModal(1)}>
+                  Entendido
+                </MDBBtn>
+              </MDBModalFooter>
+            </MDBModal>
+            <MDBModal isOpen={this.state.modal2} toggle={this.toggleModal(2)}>
+              <MDBModalHeader toggle={this.toggleModal(2)}>
+                Ha ocurrido un problema
+              </MDBModalHeader>
+              <MDBModalBody>
+                El archivo de <strong>ausencias</strong> seleccionado no es
+                válido, intente con otro archivo. <br /> <br />
+                Recuerde que el mismo debe ser descargado de: <br />
+                'Ausencias por legajo completo'.
+                <br /> <br />
+                En caso de que el error persista, por favor comuníquese con el
+                administrador del sistema.
+              </MDBModalBody>
+              <MDBModalFooter>
+                <MDBBtn color="indigo" onClick={this.toggleModal(2)}>
+                  Entendido
+                </MDBBtn>
+              </MDBModalFooter>
+            </MDBModal>
+            <MDBModal isOpen={this.state.modal3} toggle={this.toggleModal(3)}>
+              <MDBModalHeader toggle={this.toggleModal(3)}>
+                Ha ocurrido un problema
+              </MDBModalHeader>
+              <MDBModalBody>
+                El archivo de <strong>novedades</strong> seleccionado no es
+                válido, intente con otro archivo.
+                <br />
+                <br />
+                En caso de que el error persista, por favor comuníquese con el
+                administrador del sistema.
+              </MDBModalBody>
+              <MDBModalFooter>
+                <MDBBtn color="indigo" onClick={this.toggleModal(3)}>
+                  Entendido
+                </MDBBtn>
+              </MDBModalFooter>
+            </MDBModal>
+          </MDBContainer>
         </div>
       </>
     );

@@ -13,7 +13,6 @@ import "./ResultPage.css";
 import Loading from "../components/loading";
 import { CSVLink } from "react-csv";
 import { Toast } from "react-bootstrap";
-import { useState } from "react";
 
 class ResultPage extends React.Component {
   state = {
@@ -368,46 +367,47 @@ class ResultPage extends React.Component {
                             Descargar descuentos horas novedades (.csv)
                           </button>
                         </CSVLink>
-                        {/* {this.state.descuentos[0].agentesNov.filter(
+                        {this.state.descuentos[0].agentesNov.filter(
                           agent => agent.diasdesc >= 1
-                        ).length > 0 && (
-                          <CSVLink
-                            data={this.state.descuentos[0].agentesNov
-                              .filter(agent => agent.diasdesc >= 1)
-                              .slice(1)}
-                            headers={[
-                              {
-                                label: this.state.descuentos[0].agentesNov.filter(
-                                  agent => agent.diasdesc >= 1
-                                )[0].legajo,
-                                key: "legajo"
-                              },
-                              {
-                                label: this.state.descuentos[0].agentesNov.filter(
-                                  agent => agent.diasdesc >= 1
-                                )[0].default,
-                                key: "default"
-                              },
-                              {
-                                label: this.state.descuentos[0].agentesNov.filter(
-                                  agent => agent.diasdesc >= 1
-                                )[0].diasdesc,
-                                key: "diasdesc"
+                        ).length > 0 &&
+                          this.state.descuentos[0].agentesAus.length <= 0 && (
+                            <CSVLink
+                              data={this.state.descuentos[0].agentesNov
+                                .filter(agent => agent.diasdesc >= 1)
+                                .slice(1)}
+                              headers={[
+                                {
+                                  label: this.state.descuentos[0].agentesNov.filter(
+                                    agent => agent.diasdesc >= 1
+                                  )[0].legajo,
+                                  key: "legajo"
+                                },
+                                {
+                                  label: this.state.descuentos[0].agentesNov.filter(
+                                    agent => agent.diasdesc >= 1
+                                  )[0].default,
+                                  key: "default"
+                                },
+                                {
+                                  label: this.state.descuentos[0].agentesNov.filter(
+                                    agent => agent.diasdesc >= 1
+                                  )[0].diasdesc,
+                                  key: "diasdesc"
+                                }
+                              ]}
+                              enclosingCharacter={``}
+                              filename={
+                                "Descuento dias novedades - " +
+                                this.state.descuentos[0].numero +
+                                ".csv"
                               }
-                            ]}
-                            enclosingCharacter={``}
-                            filename={
-                              "Descuento dias novedades - " +
-                              this.state.descuentos[0].numero +
-                              ".csv"
-                            }
-                            target="_blank"
-                          >
-                            <button className="btn Ripple-parent btn-indigo top20">
-                              Descargar descuentos días novedades (.csv)
-                            </button>
-                          </CSVLink>
-                        )} */}
+                              target="_blank"
+                            >
+                              <button className="btn Ripple-parent btn-indigo top20">
+                                Descargar descuentos días novedades (.csv)
+                              </button>
+                            </CSVLink>
+                          )}
                       </>
                     )}
                   </MDBCardBody>

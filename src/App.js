@@ -80,7 +80,7 @@ class App extends Component {
             >
               <MDBNavbarNav right>
                 <MDBNavItem>
-                  <strong style={{ color: "white" }}>Versión Alpha 1.0</strong>
+                  <strong style={{ color: "white" }}>Versión Beta 1.0</strong>
                 </MDBNavItem>
                 {/*<MDBNavItem>
                   <MDBNavLink

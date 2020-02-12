@@ -23,10 +23,13 @@ class UploadPage extends React.Component {
     oficinaPrueba: [],
     fileNovedades: null,
     fileAusencias: null,
+    checkAus: false,
+    checkNov: false,
     uploadValue: 0,
     modal1: false,
     modal2: false,
     modal3: false,
+    modal4: false,
     descuentos: [
       {
         nombre: "",
@@ -59,15 +62,59 @@ class UploadPage extends React.Component {
   handleChange = e => {
     let nameFile = e.target.value.substr(12);
     if (this.state.typeFile === "Novedades") {
-      this.setState({
-        nameNovedades: nameFile,
-        fileNovedades: e.target.files[0]
-      });
+      this.setState(
+        {
+          nameNovedades: nameFile,
+          fileNovedades: e.target.files[0]
+        },
+        () => {
+          let check = false;
+          if (
+            this.state.fileNovedades !== null &&
+            this.state.fileNovedades.type !== "application/vnd.ms-excel"
+          ) {
+            this.toggleModal(1)();
+          } else {
+            this.papaParsePromiseNov(this.state.fileNovedades).then(results => {
+              if (!results) {
+                this.toggleModal(3)();
+              } else {
+                check = true;
+              }
+              this.setState({
+                checkNov: check
+              });
+            });
+          }
+        }
+      );
     } else {
-      this.setState({
-        nameAusencias: nameFile,
-        fileAusencias: e.target.files[0]
-      });
+      this.setState(
+        {
+          nameAusencias: nameFile,
+          fileAusencias: e.target.files[0]
+        },
+        () => {
+          let check = false;
+          if (
+            this.state.fileAusencias !== null &&
+            this.state.fileAusencias.type !== "application/vnd.ms-excel"
+          ) {
+            this.toggleModal(1)();
+          } else {
+            this.papaParsePromiseAus(this.state.fileAusencias).then(results => {
+              if (!results) {
+                this.toggleModal(2)();
+              } else {
+                check = true;
+              }
+              this.setState({
+                checkAus: check
+              });
+            });
+          }
+        }
+      );
     }
   };
 
@@ -206,7 +253,7 @@ class UploadPage extends React.Component {
           descuentos: descuentosAus
         },
         () => {
-          if (this.state.fileNovedades !== null) {
+          if (this.state.checkNov) {
             this.leerArchivoN(this.state.fileNovedades, "N", descuentosAus);
           } else {
             this.props.onUpload(this.state.descuentos);
@@ -222,7 +269,6 @@ class UploadPage extends React.Component {
     var descuentosNov;
     if (descuentoAnterior != null) {
       descuentosNov = Object.assign({}, descuentoAnterior);
-      console.log("asigna3");
     } else {
       descuentosNov = [];
     }
@@ -335,18 +381,20 @@ class UploadPage extends React.Component {
               }
             }
             if (nuevo !== null) {
-              let indexAgent = descuentosNov[0].agentesAus.findIndex(
-                // eslint-disable-next-line
-                agent => agent.legajo === nuevo.legajo
-              );
-              if (indexAgent !== -1 && nuevo.diasdesc > 0) {
-                descuentosNov[0].agentesAus[indexAgent].diasdesc +=
-                  nuevo.diasdesc;
-              } else if (nuevo.diasdesc > 0) {
-                descuentosNov[0].agentesAus.push(nuevo);
-                descuentosNov[0].agentesAus.sort(function(a, b) {
-                  return a.legajo - b.legajo;
-                });
+              if (descuentosNov[0].agentesAus.length > 0) {
+                let indexAgent = descuentosNov[0].agentesAus.findIndex(
+                  // eslint-disable-next-line
+                  agent => agent.legajo === nuevo.legajo
+                );
+                if (indexAgent !== -1 && nuevo.diasdesc > 0) {
+                  descuentosNov[0].agentesAus[indexAgent].diasdesc +=
+                    nuevo.diasdesc;
+                } else if (nuevo.diasdesc > 0) {
+                  descuentosNov[0].agentesAus.push(nuevo);
+                  descuentosNov[0].agentesAus.sort(function(a, b) {
+                    return a.legajo - b.legajo;
+                  });
+                }
               }
               descuentosNov[0].agentesNov.push(nuevo);
             }
@@ -387,6 +435,39 @@ class UploadPage extends React.Component {
     );
   };
 
+  papaParsePromiseAus = function(file) {
+    return new Promise(function(complete, error) {
+      Papa.parse(file, {
+        step: function(results, parser) {
+          var rows = results.data;
+          for (var x = 0; x < rows.length; x++) {
+            if (rows[x] === "Dias Corridos") {
+              complete(true);
+              parser.abort();
+            }
+          }
+          complete(false);
+        }
+      });
+    });
+  };
+
+  papaParsePromiseNov = function(file) {
+    return new Promise(function(complete, error) {
+      Papa.parse(file, {
+        step: function(results, parser) {
+          var rows = results.data;
+          for (var x = 0; x < rows.length; x++) {
+            if (rows[x] === "Valor") {
+              complete(true);
+            }
+          }
+          complete(false);
+        }
+      });
+    });
+  };
+
   // generarDescuentos = () => {
   //   if (
   //     (this.state.fileAusencias !== null &&
@@ -398,42 +479,48 @@ class UploadPage extends React.Component {
   //   } else if (this.state.fileAusencias !== null) {
   //     let archivoAusencias = false;
   //     let archivoNovedades = false;
-  //     Papa.parse(this.state.fileAusencias, {
-  //       step: function(results, parser) {
-  //         var rows = results.data;
-  //         for (var x = 0; x < rows.length; x++) {
-  //           if (rows[x] === "Dias Corridos") {
-  //             archivoAusencias = true;
-  //             parser.abort();
-  //           }
-  //         }
-  //       }
-  //     });
-  //     if (this.state.fileNovedades !== null) {
-  //       Papa.parse(this.state.fileNovedades, {
-  //         step: function(results, parser) {
-  //           var rows = results.data;
-  //           for (var x = 0; x < rows.length; x++) {
-  //             if (rows[x] === "Valor") {
-  //               archivoNovedades = true;
-  //               parser.abort();
-  //             }
-  //           }
-  //         }
-  //       });
-  //     }
-  //     setTimeout(
-  //       function() {
-  //         if (!archivoNovedades && this.state.fileNovedades !== null) {
-  //           this.toggleModal(3)();
-  //         } else if (!archivoAusencias) {
-  //           this.toggleModal(2)();
-  //         } else {
-  //           this.leerArchivoA(this.state.fileAusencias, "A");
-  //         }
-  //       }.bind(this),
-  //       10
-  //     );
+  //     // if (this.state.fileNovedades !== null) {
+  //     //   Papa.parse(this.state.fileNovedades, {
+  //     //     step: function(results, parser) {
+  //     //       var rows = results.data;
+  //     //       for (var x = 0; x < rows.length; x++) {
+  //     //         if (rows[x] === "Valor") {
+  //     //           archivoNovedades = true;
+  //     //           parser.abort();
+  //     //         }
+  //     //       }
+  //     //     }
+  //     //   });
+  //     // }
+  //     // Papa.parse(this.state.fileAusencias, {
+  //     //   step: function(results, parser) {
+  //     //     var rows = results.data;
+  //     //     for (var x = 0; x < rows.length; x++) {
+  //     //       if (rows[x] === "Dias Corridos") {
+  //     //         archivoAusencias = true;
+  //     //         parser.abort();
+  //     //       }
+  //     //     }
+  //     //   }
+  //     // });
+  //     // // setTimeout(
+  //     // //   function() {
+  //     //     if (
+  //     //       !archivoNovedades &&
+  //     //       this.state.fileNovedades !== null &&
+  //     //       !archivoAusencias
+  //     //     ) {
+  //     //       this.toggleModal(4)();
+  //     //     } else if (!archivoNovedades && this.state.fileNovedades !== null) {
+  //     //       this.toggleModal(3)();
+  //     //     } else if (!archivoAusencias) {
+  //     //       this.toggleModal(2)();
+  //     //     } else {
+  //     this.leerArchivoA(this.state.fileAusencias, "A");
+  //     // }
+  //     //   }.bind(this),
+  //     //   10
+  //     // );
   //   } else if (this.state.fileNovedades !== null) {
   //     let archivoNovedades = false;
   //     Papa.parse(this.state.fileNovedades, {
@@ -461,9 +548,9 @@ class UploadPage extends React.Component {
   // };
 
   generarDescuentos = () => {
-    if (this.state.fileAusencias !== null) {
+    if (this.state.checkAus) {
       this.leerArchivoA(this.state.fileAusencias, "A");
-    } else if (this.state.fileNovedades !== null) {
+    } else if (this.state.checkNov) {
       this.leerArchivoN(this.state.fileNovedades, "N");
     }
   };
@@ -476,6 +563,20 @@ class UploadPage extends React.Component {
   };
 
   render() {
+    const checkAus =
+      this.state.fileAusencias === null
+        ? "btn-elegant"
+        : this.state.checkAus
+        ? "btn-success"
+        : "btn-danger";
+
+    const checkNov =
+      this.state.fileNovedades === null
+        ? "btn-elegant"
+        : this.state.checkNov
+        ? "btn-success"
+        : "btn-danger";
+
     return (
       <>
         <div className="mt-3 mb-5">
@@ -495,7 +596,7 @@ class UploadPage extends React.Component {
                   <MDBRow />
                   <MDBRow className="d-flex flex-row justify-content-center row">
                     <button
-                      className="btn Ripple-parent btn-elegant"
+                      className={`btn Ripple-parent ${checkNov}`}
                       onClick={this.handleClick}
                       value="Novedades"
                     >
@@ -508,7 +609,7 @@ class UploadPage extends React.Component {
                       onChange={this.handleChange}
                     ></input>
                     <button
-                      className="btn Ripple-parent btn-elegant"
+                      className={`btn Ripple-parent ${checkAus}`}
                       onClick={this.handleClick}
                       value="Ausencias"
                     >
@@ -541,7 +642,7 @@ class UploadPage extends React.Component {
                 Ha ocurrido un problema
               </MDBModalHeader>
               <MDBModalBody>
-                El o los archivos elegidos no corresponden a un
+                El archivo elegido no corresponde a un
                 <strong> archivo .CSV</strong>, por favor intente nuevamente.
               </MDBModalBody>
               <MDBModalFooter>
@@ -575,7 +676,7 @@ class UploadPage extends React.Component {
               </MDBModalHeader>
               <MDBModalBody>
                 El archivo de <strong>novedades</strong> seleccionado no es
-                válido, intente con otro archivo.
+                válido, intente nuevamente.
                 <br />
                 <br />
                 En caso de que el error persista, por favor comuníquese con el
@@ -583,6 +684,23 @@ class UploadPage extends React.Component {
               </MDBModalBody>
               <MDBModalFooter>
                 <MDBBtn color="indigo" onClick={this.toggleModal(3)}>
+                  Entendido
+                </MDBBtn>
+              </MDBModalFooter>
+            </MDBModal>
+            <MDBModal isOpen={this.state.modal4} toggle={this.toggleModal(4)}>
+              <MDBModalHeader toggle={this.toggleModal(4)}>
+                Ha ocurrido un problema
+              </MDBModalHeader>
+              <MDBModalBody>
+                Ambos archivos seleccionados no son válidos, intente nuevamente.
+                <br />
+                <br />
+                En caso de que el error persista, por favor comuníquese con el
+                administrador del sistema.
+              </MDBModalBody>
+              <MDBModalFooter>
+                <MDBBtn color="indigo" onClick={this.toggleModal(4)}>
                   Entendido
                 </MDBBtn>
               </MDBModalFooter>

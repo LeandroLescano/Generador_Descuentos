@@ -74,6 +74,9 @@ class UploadPage extends React.Component {
             this.state.fileNovedades.type !== "application/vnd.ms-excel"
           ) {
             this.toggleModal(1)();
+            this.setState({
+              checkNov: check
+            });
           } else {
             this.papaParsePromiseNov(this.state.fileNovedades).then(results => {
               if (!results) {
@@ -101,6 +104,9 @@ class UploadPage extends React.Component {
             this.state.fileAusencias.type !== "application/vnd.ms-excel"
           ) {
             this.toggleModal(1)();
+            this.setState({
+              checkAus: check
+            });
           } else {
             this.papaParsePromiseAus(this.state.fileAusencias).then(results => {
               if (!results) {
@@ -143,6 +149,7 @@ class UploadPage extends React.Component {
     //133
     //150 lic esp sin justif
     //203
+    //245 1 DÍA A CUENTA S/JUSTIF
 
     // -- CODIGOS DE EXCESOS EXENFAMIL Y EXENFER --
     //49 - EXCESO AUSENCIAS ENFERMEDAD
@@ -170,7 +177,8 @@ class UploadPage extends React.Component {
       122,
       133,
       150,
-      203
+      203,
+      245
     ];
     Papa.parse(
       file,
@@ -272,8 +280,6 @@ class UploadPage extends React.Component {
     } else {
       descuentosNov = [];
     }
-    console.log(descuentoAnterior);
-    console.log(descuentosNov);
     //1 - LLEGADA TARDE
     //2 - SALIDA ANTICIPADA
     //3 - HORAS NO TRABAJADAS

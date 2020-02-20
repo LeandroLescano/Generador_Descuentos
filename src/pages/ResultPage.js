@@ -7,12 +7,14 @@ import {
   MDBCardBody,
   MDBTable,
   TableBody,
-  MDBTableHead
+  MDBTableHead,
+  MDBIcon
 } from "mdbreact";
 import "./ResultPage.css";
 import Loading from "../components/loading";
 import { CSVLink } from "react-csv";
 import { Toast } from "react-bootstrap";
+import AlertToast from "../components/alertToast";
 
 class ResultPage extends React.Component {
   state = {
@@ -171,7 +173,7 @@ class ResultPage extends React.Component {
                             )}
                           </TableBody>
                         </MDBTable>
-                        {/* Boton para descargar el excel de las ausencias */}
+                        {/* BOTON LISTADO AUSENCIAS */}
                         <CSVLink
                           data={this.state.descuentos[0].agentesAus
                             .filter(agent => agent.diasdesc > 0)
@@ -195,7 +197,7 @@ class ResultPage extends React.Component {
                           ]}
                           enclosingCharacter={``}
                           filename={
-                            "Descuento ausencias - " +
+                            "Descuento ausencias " +
                             this.state.descuentos[0].numero +
                             ".csv"
                           }
@@ -237,7 +239,7 @@ class ResultPage extends React.Component {
                             ]}
                             enclosingCharacter={``}
                             filename={
-                              "Descuento dias exceso enfermedad - " +
+                              "Descuento dias exceso enfermedad " +
                               this.state.descuentos[0].numero +
                               ".csv"
                             }
@@ -280,7 +282,7 @@ class ResultPage extends React.Component {
                             ]}
                             enclosingCharacter={``}
                             filename={
-                              "Descuento dias exceso familiar enf. - " +
+                              "Descuento dias exceso familiar enf. " +
                               this.state.descuentos[0].numero +
                               ".csv"
                             }
@@ -357,7 +359,7 @@ class ResultPage extends React.Component {
                           ]}
                           enclosingCharacter={``}
                           filename={
-                            "Descuento horas novedades - " +
+                            "Descuento horas novedades " +
                             this.state.descuentos[0].numero +
                             ".csv"
                           }
@@ -397,7 +399,7 @@ class ResultPage extends React.Component {
                               ]}
                               enclosingCharacter={``}
                               filename={
-                                "Descuento dias novedades - " +
+                                "Descuento dias novedades " +
                                 this.state.descuentos[0].numero +
                                 ".csv"
                               }
@@ -416,26 +418,24 @@ class ResultPage extends React.Component {
             </MDBRow>
           </MDBFreeBird>
           <MDBContainer></MDBContainer>
-          {this.state.showToast && (
-            <Toast
-              show={this.state.showToast}
-              onClose={this.toggleToast}
-              className="toast-place"
-            >
-              <Toast.Header>
-                <img
-                  src="https://image.flaticon.com/icons/svg/595/595067.svg"
-                  className="img-toast"
-                  alt="Warn"
-                ></img>
-                <strong className="mr-auto">Omisiones de fichada</strong>
-              </Toast.Header>
-              <Toast.Body>
-                Los descuentos por omisiones de fichada fueron sumados en el
-                archivo de ausencias.
-              </Toast.Body>
-            </Toast>
-          )}
+          {/* {this.state.showToast && ( */}
+          {/* <Toast
+            show={this.state.showToast}
+            onClose={this.offToast}
+            delay={10000}
+            autohide
+            className="toast-place"
+          >
+            <Toast.Header>
+              <MDBIcon icon="exclamation-triangle" className="img-toast" />
+              <strong className="mr-auto">Omisiones de fichada</strong>
+            </Toast.Header>
+            <Toast.Body>
+              Los descuentos por omisiones de fichada fueron sumados en el
+              archivo de ausencias.
+            </Toast.Body>
+          </Toast> */}
+          {/* )} */}
         </div>
       </>
     );

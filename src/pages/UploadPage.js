@@ -61,66 +61,72 @@ class UploadPage extends React.Component {
 
   handleChange = e => {
     let nameFile = e.target.value.substr(12);
-    if (this.state.typeFile === "Novedades") {
-      this.setState(
-        {
-          nameNovedades: nameFile,
-          fileNovedades: e.target.files[0]
-        },
-        () => {
-          let check = false;
-          if (
-            this.state.fileNovedades !== null &&
-            this.state.fileNovedades.type !== "application/vnd.ms-excel"
-          ) {
-            this.toggleModal(1)();
-            this.setState({
-              checkNov: check
-            });
-          } else {
-            this.papaParsePromiseNov(this.state.fileNovedades).then(results => {
-              if (!results) {
-                this.toggleModal(3)();
-              } else {
-                check = true;
-              }
+    if (e.target.files.length > 0) {
+      if (this.state.typeFile === "Novedades") {
+        this.setState(
+          {
+            nameNovedades: nameFile,
+            fileNovedades: e.target.files[0]
+          },
+          () => {
+            let check = false;
+            if (
+              this.state.fileNovedades !== null &&
+              this.state.fileNovedades.type !== "application/vnd.ms-excel"
+            ) {
+              this.toggleModal(1)();
               this.setState({
                 checkNov: check
               });
-            });
+            } else {
+              this.papaParsePromiseNov(this.state.fileNovedades).then(
+                results => {
+                  if (!results) {
+                    this.toggleModal(3)();
+                  } else {
+                    check = true;
+                  }
+                  this.setState({
+                    checkNov: check
+                  });
+                }
+              );
+            }
           }
-        }
-      );
-    } else {
-      this.setState(
-        {
-          nameAusencias: nameFile,
-          fileAusencias: e.target.files[0]
-        },
-        () => {
-          let check = false;
-          if (
-            this.state.fileAusencias !== null &&
-            this.state.fileAusencias.type !== "application/vnd.ms-excel"
-          ) {
-            this.toggleModal(1)();
-            this.setState({
-              checkAus: check
-            });
-          } else {
-            this.papaParsePromiseAus(this.state.fileAusencias).then(results => {
-              if (!results) {
-                this.toggleModal(2)();
-              } else {
-                check = true;
-              }
+        );
+      } else {
+        this.setState(
+          {
+            nameAusencias: nameFile,
+            fileAusencias: e.target.files[0]
+          },
+          () => {
+            let check = false;
+            if (
+              this.state.fileAusencias !== null &&
+              this.state.fileAusencias.type !== "application/vnd.ms-excel"
+            ) {
+              this.toggleModal(1)();
               this.setState({
                 checkAus: check
               });
-            });
+            } else {
+              this.papaParsePromiseAus(this.state.fileAusencias).then(
+                results => {
+                  if (!results) {
+                    this.toggleModal(2)();
+                  } else {
+                    check = true;
+                  }
+                  this.setState({
+                    checkAus: check
+                  });
+                }
+              );
+            }
           }
-        }
-      );
+        );
+      }
     }
   };
 
@@ -191,7 +197,7 @@ class UploadPage extends React.Component {
           var i = 0;
           var keyAct = 0;
           var x = 0;
-          while (rows[0][x] !== "Observaciones" && x < rows.length) {
+          while (rows[0][x] !== "Observaciones" && x < rows[0].length) {
             x++;
           }
           var iObserv = x;
@@ -393,8 +399,9 @@ class UploadPage extends React.Component {
                   agent => agent.legajo === nuevo.legajo
                 );
                 if (indexAgent !== -1 && nuevo.diasdesc > 0) {
-                  descuentosNov[0].agentesAus[indexAgent].diasdesc +=
-                    nuevo.diasdesc;
+                  descuentosNov[0].agentesAus[indexAgent].diasdesc =
+                    parseInt(descuentosNov[0].agentesAus[indexAgent].diasdesc) +
+                    parseInt(nuevo.diasdesc);
                 } else if (nuevo.diasdesc > 0) {
                   descuentosNov[0].agentesAus.push(nuevo);
                   descuentosNov[0].agentesAus.sort(function(a, b) {
@@ -473,85 +480,6 @@ class UploadPage extends React.Component {
       });
     });
   };
-
-  // generarDescuentos = () => {
-  //   if (
-  //     (this.state.fileAusencias !== null &&
-  //       this.state.fileAusencias.type !== "application/vnd.ms-excel") ||
-  //     (this.state.fileNovedades !== null &&
-  //       this.state.fileNovedades.type !== "application/vnd.ms-excel")
-  //   ) {
-  //     this.toggleModal(1)();
-  //   } else if (this.state.fileAusencias !== null) {
-  //     let archivoAusencias = false;
-  //     let archivoNovedades = false;
-  //     // if (this.state.fileNovedades !== null) {
-  //     //   Papa.parse(this.state.fileNovedades, {
-  //     //     step: function(results, parser) {
-  //     //       var rows = results.data;
-  //     //       for (var x = 0; x < rows.length; x++) {
-  //     //         if (rows[x] === "Valor") {
-  //     //           archivoNovedades = true;
-  //     //           parser.abort();
-  //     //         }
-  //     //       }
-  //     //     }
-  //     //   });
-  //     // }
-  //     // Papa.parse(this.state.fileAusencias, {
-  //     //   step: function(results, parser) {
-  //     //     var rows = results.data;
-  //     //     for (var x = 0; x < rows.length; x++) {
-  //     //       if (rows[x] === "Dias Corridos") {
-  //     //         archivoAusencias = true;
-  //     //         parser.abort();
-  //     //       }
-  //     //     }
-  //     //   }
-  //     // });
-  //     // // setTimeout(
-  //     // //   function() {
-  //     //     if (
-  //     //       !archivoNovedades &&
-  //     //       this.state.fileNovedades !== null &&
-  //     //       !archivoAusencias
-  //     //     ) {
-  //     //       this.toggleModal(4)();
-  //     //     } else if (!archivoNovedades && this.state.fileNovedades !== null) {
-  //     //       this.toggleModal(3)();
-  //     //     } else if (!archivoAusencias) {
-  //     //       this.toggleModal(2)();
-  //     //     } else {
-  //     this.leerArchivoA(this.state.fileAusencias, "A");
-  //     // }
-  //     //   }.bind(this),
-  //     //   10
-  //     // );
-  //   } else if (this.state.fileNovedades !== null) {
-  //     let archivoNovedades = false;
-  //     Papa.parse(this.state.fileNovedades, {
-  //       step: function(results, parser) {
-  //         var rows = results.data;
-  //         for (var x = 0; x < rows.length; x++) {
-  //           if (rows[x] === "Valor") {
-  //             archivoNovedades = true;
-  //             parser.abort();
-  //           }
-  //         }
-  //       }
-  //     });
-  //     setTimeout(
-  //       function() {
-  //         if (archivoNovedades) {
-  //           this.leerArchivoN(this.state.fileNovedades, "N");
-  //         } else {
-  //           this.toggleModal(3)();
-  //         }
-  //       }.bind(this),
-  //       5
-  //     );
-  //   }
-  // };
 
   generarDescuentos = () => {
     if (this.state.checkAus) {

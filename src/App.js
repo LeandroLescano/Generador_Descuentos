@@ -82,79 +82,6 @@ class App extends Component {
                 <MDBNavItem>
                   <strong style={{ color: "white" }}>Versión Beta 1.0</strong>
                 </MDBNavItem>
-                {/*<MDBNavItem>
-                  <MDBNavLink
-                    exact
-                    to="/"
-                    onClick={this.closeCollapse("mainNavbarCollapse")}
-                  >
-                    <strong>Home</strong>
-                  </MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink
-                    onClick={this.closeCollapse("mainNavbarCollapse")}
-                    to="/css"
-                  >
-                    <strong>CSS</strong>
-                  </MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink
-                    onClick={this.closeCollapse("mainNavbarCollapse")}
-                    to="/components"
-                  >
-                    <strong>Components</strong>
-                  </MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink
-                    onClick={this.closeCollapse("mainNavbarCollapse")}
-                    to="/advanced"
-                  >
-                    <strong>Advanced</strong>
-                  </MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink
-                    onClick={this.closeCollapse("mainNavbarCollapse")}
-                    to="/navigation"
-                  >
-                    <strong>Navigation</strong>
-                  </MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink
-                    onClick={this.closeCollapse("mainNavbarCollapse")}
-                    to="/forms"
-                  >
-                    <strong>Forms</strong>
-                  </MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink
-                    onClick={this.closeCollapse("mainNavbarCollapse")}
-                    to="/tables"
-                  >
-                    <strong>Tables</strong>
-                  </MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink
-                    onClick={this.closeCollapse("mainNavbarCollapse")}
-                    to="/modals"
-                  >
-                    <strong>Modals</strong>
-                  </MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink
-                    onClick={this.closeCollapse("mainNavbarCollapse")}
-                    to="/addons"
-                  >
-                    <strong>Addons</strong>
-                  </MDBNavLink>
-                </MDBNavItem> */}
               </MDBNavbarNav>
             </MDBCollapse>
           </MDBNavbar>
@@ -164,23 +91,10 @@ class App extends Component {
           </main>
           <MDBFooter color="indigo">
             <div>
-              <p className="footer-copyright mb-0 pb-0 pt-2 text-center">
+              <p className="footer-copyright mb-2 pb-1 pt-2 text-center">
                 &copy; {new Date().getFullYear()} Copyright: Lescano, Leandro
                 Nicolas{" "}
               </p>
-              <div className="footer-copyright mb-0 pb-2 pt-0 text-center">
-                Icons made by{" "}
-                <a
-                  href="https://www.flaticon.com/authors/freepik"
-                  title="Freepik"
-                >
-                  Freepik
-                </a>{" "}
-                from{" "}
-                <a href="https://www.flaticon.com/" title="Flaticon">
-                  www.flaticon.com
-                </a>
-              </div>
             </div>
           </MDBFooter>
         </div>

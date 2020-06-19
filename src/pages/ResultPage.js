@@ -7,17 +7,29 @@ import {
   MDBCardBody,
   MDBTable,
   TableBody,
-  MDBTableHead,
-  MDBIcon
+  MDBTableHead
+  // MDBIcon
 } from "mdbreact";
 import "./ResultPage.css";
 import Loading from "../components/loading";
 import { CSVLink } from "react-csv";
-import { Toast } from "react-bootstrap";
-import AlertToast from "../components/alertToast";
+// import { Toast } from "react-bootstrap";
+// import AlertToast from "../components/alertToast";
 
 class ResultPage extends React.Component {
   state = {
+    agentesAusMesAnterior: [
+      {
+        ausencias:[],
+        default: "",
+        diasdesc: "",
+        diasexenfamil:"",
+        diasexenfer: "",
+        key: null,
+        legajo: "",
+        nombre: ""
+      }
+    ],
     descuentos: [
       {
         nombre: "",
@@ -44,6 +56,26 @@ class ResultPage extends React.Component {
   };
 
   checkOmisionesF = () => {
+    var today = new Date();
+    var mesAnterior = today.getMonth();
+    console.log(today.getFullYear());
+    if (this.props.desc[0].agentesAus != null) {
+      var agentesMesAnterior = this.props.desc[0].agentesAus.filter(agent =>
+        agent.ausencias.some(
+          aus =>
+            parseInt(aus.fechai.substring(4, 5)) < mesAnterior ||
+            parseInt(aus.fechai.substring(6, 10) < today.getFullYear())
+        )
+      );
+    }
+    console.log(this.props.desc[0].agentesAus[0].ausencias[0].fechai.substring(4,5), " - mesAnterior: ", mesAnterior);
+    console.log(this.props.desc[0].agentesAus[0].ausencias[0].fechai.substring(6,10), "- today.getFullYear(): ", today.getFullYear());
+    console.log(agentesMesAnterior);
+    this.setState({
+      agentesAusMesAnterior: agentesMesAnterior
+    });
+
+
     if (
       this.props.desc[0].agentesNov.filter(agent => agent.diasdesc > 0).length >
         0 &&
@@ -174,39 +206,43 @@ class ResultPage extends React.Component {
                           </TableBody>
                         </MDBTable>
                         {/* BOTON LISTADO AUSENCIAS */}
-                        <CSVLink
-                          data={this.state.descuentos[0].agentesAus
-                            .filter(agent => agent.diasdesc > 0)
-                            .slice(1)}
-                          headers={[
-                            {
-                              label: this.state.descuentos[0].agentesAus[0]
-                                .legajo,
-                              key: "legajo"
-                            },
-                            {
-                              label: this.state.descuentos[0].agentesAus[0]
-                                .default,
-                              key: "default"
-                            },
-                            {
-                              label: this.state.descuentos[0].agentesAus[0]
-                                .diasdesc,
-                              key: "diasdesc"
+                        {this.state.descuentos[0].agentesAus.filter(
+                          agent => agent.diasdesc > 0
+                        ).length > 0 && (
+                          <CSVLink
+                            data={this.state.descuentos[0].agentesAus
+                              .filter(agent => agent.diasdesc > 0)
+                              .slice(1)}
+                            headers={[
+                              {
+                                label: this.state.descuentos[0].agentesAus[0]
+                                  .legajo,
+                                key: "legajo"
+                              },
+                              {
+                                label: this.state.descuentos[0].agentesAus[0]
+                                  .default,
+                                key: "default"
+                              },
+                              {
+                                label: this.state.descuentos[0].agentesAus[0]
+                                  .diasdesc,
+                                key: "diasdesc"
+                              }
+                            ]}
+                            enclosingCharacter={``}
+                            filename={
+                              "Descuento ausencias " +
+                              this.state.descuentos[0].numero +
+                              ".csv"
                             }
-                          ]}
-                          enclosingCharacter={``}
-                          filename={
-                            "Descuento ausencias " +
-                            this.state.descuentos[0].numero +
-                            ".csv"
-                          }
-                          target="_blank"
-                        >
-                          <button className="btn Ripple-parent btn-indigo top20">
-                            Descargar descuentos ausencias (.csv)
-                          </button>
-                        </CSVLink>
+                            target="_blank"
+                          >
+                            <button className="btn Ripple-parent btn-indigo top20">
+                              Descargar descuentos ausencias (.csv)
+                            </button>
+                          </CSVLink>
+                        )}
 
                         {/* BOTON LISTADO AUSENCIAS ENFERMEDAD (49) */}
 
@@ -333,42 +369,46 @@ class ResultPage extends React.Component {
                           </TableBody>
                         </MDBTable>
                         {/* Boton para descargar el excel de las novedades */}
-                        <CSVLink
-                          data={this.state.descuentos[0].agentesNov
-                            .filter(agent => agent.horasdesc >= 0.5)
-                            .slice(1)}
-                          headers={[
-                            {
-                              label: this.state.descuentos[0].agentesNov.filter(
-                                agent => agent.horasdesc >= 0.5
-                              )[0].legajo,
-                              key: "legajo"
-                            },
-                            {
-                              label: this.state.descuentos[0].agentesNov.filter(
-                                agent => agent.horasdesc >= 0.5
-                              )[0].default,
-                              key: "default"
-                            },
-                            {
-                              label: this.state.descuentos[0].agentesNov.filter(
-                                agent => agent.horasdesc >= 0.5
-                              )[0].horasdesc,
-                              key: "horasdesc"
+                        {this.state.descuentos[0].agentesNov.filter(
+                          agent => agent.horasdesc >= 0.5
+                        ).length > 0 && (
+                          <CSVLink
+                            data={this.state.descuentos[0].agentesNov
+                              .filter(agent => agent.horasdesc >= 0.5)
+                              .slice(1)}
+                            headers={[
+                              {
+                                label: this.state.descuentos[0].agentesNov.filter(
+                                  agent => agent.horasdesc >= 0.5
+                                )[0].legajo,
+                                key: "legajo"
+                              },
+                              {
+                                label: this.state.descuentos[0].agentesNov.filter(
+                                  agent => agent.horasdesc >= 0.5
+                                )[0].default,
+                                key: "default"
+                              },
+                              {
+                                label: this.state.descuentos[0].agentesNov.filter(
+                                  agent => agent.horasdesc >= 0.5
+                                )[0].horasdesc,
+                                key: "horasdesc"
+                              }
+                            ]}
+                            enclosingCharacter={``}
+                            filename={
+                              "Descuento horas novedades " +
+                              this.state.descuentos[0].numero +
+                              ".csv"
                             }
-                          ]}
-                          enclosingCharacter={``}
-                          filename={
-                            "Descuento horas novedades " +
-                            this.state.descuentos[0].numero +
-                            ".csv"
-                          }
-                          target="_blank"
-                        >
-                          <button className="btn Ripple-parent btn-indigo top20">
-                            Descargar descuentos horas novedades (.csv)
-                          </button>
-                        </CSVLink>
+                            target="_blank"
+                          >
+                            <button className="btn Ripple-parent btn-indigo top20">
+                              Descargar descuentos horas novedades (.csv)
+                            </button>
+                          </CSVLink>
+                        )}
                         {this.state.descuentos[0].agentesNov.filter(
                           agent => agent.diasdesc >= 1
                         ).length > 0 &&

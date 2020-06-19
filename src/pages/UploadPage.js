@@ -155,6 +155,7 @@ class UploadPage extends React.Component {
     //133
     //150 lic esp sin justif
     //203
+    //206 EXCESO DE ENFERMEDAD PROLONGADA
     //245 1 DÍA A CUENTA S/JUSTIF
 
     // -- CODIGOS DE EXCESOS EXENFAMIL Y EXENFER --
@@ -184,6 +185,7 @@ class UploadPage extends React.Component {
       133,
       150,
       203,
+      206,
       245
     ];
     Papa.parse(
@@ -191,6 +193,7 @@ class UploadPage extends React.Component {
       {
         complete: function(results) {
           var rows = results.data;
+          console.log(rows);
           var dias = 0,
             diasenfer = 0,
             diasfamil = 0;
@@ -225,9 +228,10 @@ class UploadPage extends React.Component {
                 ausenciasAct.push({
                   codigo: codigoNov,
                   nombre: Novedad.substring(Novedad.indexOf("- ") + 2),
-                  fechai: rows[i][15],
-                  fechaf: rows[i][16],
-                  dias: parseInt(rows[i][iObserv + 8], 10)
+                  fechai: rows[i][iObserv + 6],
+                  fechaf: rows[i][iObserv + 7],
+                  dias: parseInt(rows[i][iObserv + 8], 10),
+                  descripcion: rows[i][iObserv + 11]
                 });
                 if (codigoNov === "49") {
                   diasenfer += parseInt(rows[i][iObserv + 8], 10);

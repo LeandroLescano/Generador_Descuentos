@@ -6,8 +6,16 @@
   float: left;
 }
 
+tr td .md-form {
+  margin: 0px;
+}
+
 .arrowBack:hover {
   cursor: pointer;
+}
+
+table.table thead th {
+  vertical-align: middle;
 }
 
 .text-novinfo {

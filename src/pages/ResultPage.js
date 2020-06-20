@@ -7,7 +7,14 @@ import {
   MDBCardBody,
   MDBTable,
   TableBody,
-  MDBTableHead
+  MDBTableHead,
+  MDBTableBody,
+  MDBModal,
+  MDBModalHeader,
+  MDBModalBody,
+  MDBModalFooter,
+  MDBBtn,
+  MDBInput
   // MDBIcon
 } from "mdbreact";
 import "./ResultPage.css";
@@ -39,8 +46,56 @@ class ResultPage extends React.Component {
       }
     ],
     loaded: false,
-    showToast: false
+    showToast: false,
+    modal1: false,
+    valuesMesAnterior: [{
+      diasdesc: "",
+      diasexenfer: "",
+      diasexenfamil: ""
+    }]
   };
+
+  handleChangeNew = (i, e) => {
+    if(e.target.name === "diasdesc"){
+      this.setState({
+        valuesMesAnterior: {...this.state.valuesMesAnterior, [i]: {
+          diasdesc: e.target.value }}
+        });
+   }
+    else if (e.target.name === "diasexenfer"){
+      this.setState({
+        valuesMesAnterior: {...this.state.valuesMesAnterior, [i]: {
+          diasexenfer: e.target.value }}
+        });
+    }
+    else{
+      this.setState({
+        valuesMesAnterior: {...this.state.valuesMesAnterior, [i]: {
+          diasexenfamil: e.target.value }}
+        });
+    }
+  }
+
+  handleChange = (i, e) => {
+    let valuesAct = this.state.valuesMesAnterior;
+    if(valuesAct[i] === undefined){
+      this.handleChangeNew(i,e);
+    }
+    else{
+      if(e.target.name === "diasdesc"){
+        valuesAct[i].diasdesc = e.target.value;
+      }
+      else if (e.target.name === "diasexenfer"){
+        valuesAct[i].diasexenfer = e.target.value;
+      }
+      else{
+        valuesAct[i].diasexenfamil = e.target.value;
+      }
+      this.setState({
+        valuesMesAnterior: valuesAct
+      });
+    }
+  }
 
   componentDidMount = () => {
     setTimeout(
@@ -83,6 +138,13 @@ class ResultPage extends React.Component {
     ) {
       this.toggleToast();
     }
+  };
+
+  toggleModal = num => () => {
+    let modalNumber = "modal" + num;
+    this.setState({
+      [modalNumber]: !this.state[modalNumber]
+    });
   };
 
   toggleToast = () => {
@@ -175,6 +237,7 @@ class ResultPage extends React.Component {
                             Ausencias {this.state.descuentos[0].numero}
                           </strong>
                         </h3>
+                        <MDBBtn className="btn-elegant" onClick={this.toggleModal(1)}>Ver mes anterior</MDBBtn>
                         <MDBTable responsiveSm>
                           <MDBTableHead
                             columns={data.columns}
@@ -458,6 +521,51 @@ class ResultPage extends React.Component {
             </MDBRow>
           </MDBFreeBird>
           <MDBContainer></MDBContainer>
+            <MDBModal size="lg" isOpen={this.state.modal1} toggle={this.toggleModal(1)}>
+              <MDBModalHeader toggle={this.toggleModal(1)}>
+                ¡Cuidado! Hay agentes que arrastran ausencias del mes pasado
+              </MDBModalHeader>
+              <MDBModalBody>
+                <MDBTable className="text-center" responsiveSm>
+                <MDBTableHead
+                  columns={data.columns}
+                  color="indigo"
+                  textWhite
+                />
+              <MDBTableBody>
+                  {this.state.agentesAusMesAnterior.map(
+                  (item, i) => {
+                    return (
+                      <tr key={i}>
+                        <td className="text-center">
+                          {item.legajo}
+                        </td>
+                        <td>{item.nombre}</td>
+                        <td className="text-center">
+                          <MDBInput className="text-center" name="diasdesc" onChange={this.handleChange.bind(this, item.legajo)} valueDefault={item.diasdesc}/>
+                        </td>
+                        <td className="text-center">
+                          <MDBInput className="text-center" name="diasexenfer" onChange={this.handleChange.bind(this, item.legajo)} valueDefault={item.diasexenfer}/>
+                        </td>
+                        <td className="text-center">
+                          <MDBInput className="text-center" name="diasexenfamil" onChange={this.handleChange.bind(this, item.legajo)} valueDefault={item.diasexenfamil}/>
+                        </td>
+                      </tr>
+                    );
+                  }
+                )}
+              </MDBTableBody>
+              </MDBTable>
+              </MDBModalBody>
+              <MDBModalFooter>
+                <MDBBtn color="danger" onClick={this.toggleModal(1)}>
+                  Cancelar
+                </MDBBtn>
+                <MDBBtn color="success" onClick={this.toggleModal(1)}>
+                  Guardar
+                </MDBBtn>
+              </MDBModalFooter>
+            </MDBModal>
           {/* {this.state.showToast && ( */}
           {/* <Toast
             show={this.state.showToast}

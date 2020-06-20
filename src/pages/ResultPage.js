@@ -48,11 +48,7 @@ class ResultPage extends React.Component {
     loaded: false,
     showToast: false,
     modal1: false,
-    valuesMesAnterior: [{
-      diasdesc: "",
-      diasexenfer: "",
-      diasexenfamil: ""
-    }]
+    valuesMesAnterior: []
   };
 
   handleChangeNew = (i, e) => {
@@ -97,6 +93,26 @@ class ResultPage extends React.Component {
     }
   }
 
+  guardarCambios = () => {
+    var descuentosMonthPrevious = Object.assign({}, this.state.descuentos);
+    for(let key in this.state.valuesMesAnterior){
+      let indexAgent = this.state.descuentos[0].agentesAus.findIndex(
+        agent => agent.legajo === key
+      );
+      if(parseInt(this.state.valuesMesAnterior[key].diasdesc) > 0)
+        descuentosMonthPrevious[0].agentesAus[indexAgent].diasdesc = parseInt(this.state.valuesMesAnterior[key].diasdesc);
+      if(parseInt(this.state.valuesMesAnterior[key].diasexenfer) > 0)
+        descuentosMonthPrevious[0].agentesAus[indexAgent].diasexenfer = parseInt(this.state.valuesMesAnterior[key].diasexenfer);
+      if(parseInt(this.state.valuesMesAnterior[key].diasexenfamil) > 0)
+        descuentosMonthPrevious[0].agentesAus[indexAgent].diasexenfamil = parseInt(this.state.valuesMesAnterior[key].diasexenfamil);
+    }
+    this.setState({
+      descuentos: descuentosMonthPrevious
+    }, () => {
+      this.toggleModal(1);
+    })
+  }
+
   componentDidMount = () => {
     setTimeout(
       function() {
@@ -113,7 +129,6 @@ class ResultPage extends React.Component {
   checkOmisionesF = () => {
     var today = new Date();
     var mesAnterior = today.getMonth();
-    console.log(today.getFullYear());
     if (this.props.desc[0].agentesAus != null) {
       var agentesMesAnterior = this.props.desc[0].agentesAus.filter(agent =>
         agent.ausencias.some(
@@ -123,13 +138,9 @@ class ResultPage extends React.Component {
         )
       );
     }
-    console.log(this.props.desc[0].agentesAus[0].ausencias[0].fechai.substring(4,5), " - mesAnterior: ", mesAnterior);
-    console.log(this.props.desc[0].agentesAus[0].ausencias[0].fechai.substring(6,10), "- today.getFullYear(): ", today.getFullYear());
-    console.log(agentesMesAnterior);
     this.setState({
       agentesAusMesAnterior: agentesMesAnterior
     });
-
 
     if (
       this.props.desc[0].agentesNov.filter(agent => agent.diasdesc > 0).length >
@@ -231,13 +242,15 @@ class ResultPage extends React.Component {
                     {/* Listado de ausencias */}
                     {this.state.descuentos[0].agentesAus.length > 0 && (
                       <>
+                      <div className="d-flex">
                         <h3 className="h3-responsive text-left mb-2">
                           <strong className="font-weight-bold">
                             {" "}
                             Ausencias {this.state.descuentos[0].numero}
                           </strong>
                         </h3>
-                        <MDBBtn className="btn-elegant" onClick={this.toggleModal(1)}>Ver mes anterior</MDBBtn>
+                        {this.state.agentesAusMesAnterior.length > 0 && <MDBBtn className="btn-elegant ml-auto" onClick={this.toggleModal(1)}>Ver mes anterior</MDBBtn>}
+                      </div>
                         <MDBTable responsiveSm>
                           <MDBTableHead
                             columns={data.columns}
@@ -561,7 +574,7 @@ class ResultPage extends React.Component {
                 <MDBBtn color="danger" onClick={this.toggleModal(1)}>
                   Cancelar
                 </MDBBtn>
-                <MDBBtn color="success" onClick={this.toggleModal(1)}>
+                <MDBBtn color="success" onClick={() =>{this.guardarCambios()}}>
                   Guardar
                 </MDBBtn>
               </MDBModalFooter>

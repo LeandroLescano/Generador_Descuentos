@@ -4,6 +4,7 @@
   "private": true,
   "// If You want to install mdbreact from our GitLab repository, please replace '4.23.1' with gitURL provided here ->": "git+https://oauth2:<YOUR-TOKEN-GOES-HERE>@git.mdbootstrap.com/mdb/react/re-pro.git",
   "dependencies": {
+    "@sweetalert2/theme-material-ui": "^3.2.0",
     "axios": "^0.19.0",
     "bootstrap": "^4.4.1",
     "file-saver": "^2.0.2",
@@ -11,10 +12,12 @@
     "firebase-tools": "^7.11.0",
     "lodash.clonedeep": "^4.5.0",
     "mdbreact": "4.23.1",
+    "node-sass": "^4.14.1",
     "papaparse": "^5.1.1",
     "react": "^16.9.0",
     "react-bootstrap": "^1.0.0-beta.16",
     "react-csv": "^1.1.2",
+    "react-csv-downloader": "^1.8.0",
     "react-csv-reader": "^2.0.2",
     "react-dom": "^16.9.0",
     "react-export-excel": "^0.5.3",
@@ -22,6 +25,7 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "^3.3.0",
     "read-excel-file": "^4.0.5",
+    "sweetalert2": "^9.15.3",
     "xlsx": "^0.15.4"
   },
   "scripts": {

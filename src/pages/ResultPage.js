@@ -14,24 +14,26 @@ import {
   MDBModalBody,
   MDBModalFooter,
   MDBBtn,
-  MDBInput
-  // MDBIcon
+  MDBInput,
+  MDBIcon
 } from "mdbreact";
 import "./ResultPage.css";
 import Loading from "../components/loading";
 import { CSVLink } from "react-csv";
-// import { Toast } from "react-bootstrap";
-// import AlertToast from "../components/alertToast";
+import { Toast } from "react-bootstrap";
+ // import AlertToast from "../components/alertToast";
 
 class ResultPage extends React.Component {
   state = {
+    showToast: false,
+    modal1: false,
     agentesAusMesAnterior: [
       {
         ausencias:[],
-        default: "",
-        diasdesc: "",
-        diasexenfamil:"",
-        diasexenfer: "",
+        default: 0,
+        diasdesc: null,
+        diasexenfamil: null,
+        diasexenfer: null,
         key: null,
         legajo: "",
         nombre: ""
@@ -46,8 +48,6 @@ class ResultPage extends React.Component {
       }
     ],
     loaded: false,
-    showToast: false,
-    modal1: false,
     valuesMesAnterior: []
   };
 
@@ -95,16 +95,21 @@ class ResultPage extends React.Component {
 
   guardarCambios = () => {
     var descuentosMonthPrevious = Object.assign({}, this.state.descuentos);
+    console.log(this.state.valuesMesAnterior);
     for(let key in this.state.valuesMesAnterior){
       let indexAgent = this.state.descuentos[0].agentesAus.findIndex(
         agent => agent.legajo === key
       );
-      if(parseInt(this.state.valuesMesAnterior[key].diasdesc) > 0)
-        descuentosMonthPrevious[0].agentesAus[indexAgent].diasdesc = parseInt(this.state.valuesMesAnterior[key].diasdesc);
-      if(parseInt(this.state.valuesMesAnterior[key].diasexenfer) > 0)
-        descuentosMonthPrevious[0].agentesAus[indexAgent].diasexenfer = parseInt(this.state.valuesMesAnterior[key].diasexenfer);
-      if(parseInt(this.state.valuesMesAnterior[key].diasexenfamil) > 0)
-        descuentosMonthPrevious[0].agentesAus[indexAgent].diasexenfamil = parseInt(this.state.valuesMesAnterior[key].diasexenfamil);
+      console.log(this.state.valuesMesAnterior[key].diasdesc);
+      console.log(descuentosMonthPrevious[0].agentesAus[indexAgent].diasdesc);
+            console.log(descuentosMonthPrevious[0].agentesAus[indexAgent].diasexenfer);
+                  console.log(descuentosMonthPrevious[0].agentesAus[indexAgent].diasexenfamil);
+      if(this.state.valuesMesAnterior[key].diasdesc !== descuentosMonthPrevious[0].agentesAus[indexAgent].diasdesc)
+        descuentosMonthPrevious[0].agentesAus[indexAgent].diasdesc = this.state.valuesMesAnterior[key].diasdesc
+      if(this.state.valuesMesAnterior[key].diasexenfer !== descuentosMonthPrevious[0].agentesAus[indexAgent].diasexenfer)
+        descuentosMonthPrevious[0].agentesAus[indexAgent].diasexenfer = this.state.valuesMesAnterior[key].diasexenfer
+      if(this.state.valuesMesAnterior[key].diasexenfamil !== descuentosMonthPrevious[0].agentesAus[indexAgent].diasexenfamil)
+        descuentosMonthPrevious[0].agentesAus[indexAgent].diasexenfamil = this.state.valuesMesAnterior[key].diasexenfamil
     }
     this.setState({
       descuentos: descuentosMonthPrevious
@@ -130,7 +135,7 @@ class ResultPage extends React.Component {
     var today = new Date();
     var mesAnterior = today.getMonth();
     if (this.props.desc[0].agentesAus != null) {
-      var agentesMesAnterior = this.props.desc[0].agentesAus.filter(agent =>
+      var agentesMesAnterior = this.props.desc[0].agentesAus.filter(agent => agent.ausencias != null).filter(agent =>
         agent.ausencias.some(
           aus =>
             parseInt(aus.fechai.substring(4, 5)) < mesAnterior ||
@@ -153,15 +158,15 @@ class ResultPage extends React.Component {
 
   toggleModal = num => () => {
     let modalNumber = "modal" + num;
-    this.setState({
-      [modalNumber]: !this.state[modalNumber]
-    });
+     this.setState(state => ({
+       [modalNumber]: !state[modalNumber]
+     }));
   };
 
   toggleToast = () => {
-    this.setState({
-      showToast: !this.state.showToast
-    });
+    this.setState(state => ({
+      showToast: !state.showToast
+    }));
   };
 
   offToast = () => {
@@ -175,6 +180,7 @@ class ResultPage extends React.Component {
   };
 
   render() {
+
     const data = {
       columns: [
         {
@@ -249,7 +255,7 @@ class ResultPage extends React.Component {
                             Ausencias {this.state.descuentos[0].numero}
                           </strong>
                         </h3>
-                        {this.state.agentesAusMesAnterior.length > 0 && <MDBBtn className="btn-elegant ml-auto" onClick={this.toggleModal(1)}>Ver mes anterior</MDBBtn>}
+                        {this.state.agentesAusMesAnterior.length > 0 && <MDBBtn disabled className="btn-elegant ml-auto" onClick={this.toggleModal(1)}>Ausencias del mes anterior</MDBBtn>}
                       </div>
                         <MDBTable responsiveSm>
                           <MDBTableHead
@@ -579,25 +585,25 @@ class ResultPage extends React.Component {
                 </MDBBtn>
               </MDBModalFooter>
             </MDBModal>
-          {/* {this.state.showToast && ( */}
-          {/* <Toast
-            show={this.state.showToast}
-            onClose={this.offToast}
-            delay={10000}
-            autohide
-            className="toast-place"
-          >
-            <Toast.Header>
-              <MDBIcon icon="exclamation-triangle" className="img-toast" />
-              <strong className="mr-auto">Omisiones de fichada</strong>
-            </Toast.Header>
-            <Toast.Body>
-              Los descuentos por omisiones de fichada fueron sumados en el
-              archivo de ausencias.
-            </Toast.Body>
-          </Toast> */}
-          {/* )} */}
-        </div>
+             {this.state.showToast && (
+             <Toast
+              show={this.state.showToast}
+              onClose={this.offToast}
+              delay={10000}
+              autohide
+              className="toast-place"
+            >
+              <Toast.Header>
+                <MDBIcon icon="exclamation-triangle" className="img-toast" />
+                <strong className="mr-auto">Omisiones de fichada</strong>
+              </Toast.Header>
+              <Toast.Body>
+                Los descuentos por omisiones de fichada fueron sumados en el
+                archivo de ausencias.
+              </Toast.Body>
+            </Toast>
+             )}
+          </div>
       </>
     );
   }

@@ -10,6 +10,10 @@ tr td .md-form {
   margin: 0px;
 }
 
+div[role=button]:focus{
+  outline: 0px;
+}
+
 .arrowBack:hover {
   cursor: pointer;
 }

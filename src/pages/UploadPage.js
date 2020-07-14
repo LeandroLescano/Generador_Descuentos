@@ -20,7 +20,7 @@ class UploadPage extends React.Component {
     typeFile: "",
     nameNovedades: "",
     nameAusencias: "",
-    oficinaPrueba: [],
+    listOficinas: [],
     fileNovedades: null,
     fileAusencias: null,
     checkAus: false,
@@ -134,6 +134,7 @@ class UploadPage extends React.Component {
     let reader = new FileReader();
     reader.readAsDataURL(file);
 
+    var listOficinasTest = []
     var descuentosAus = JSON.parse(JSON.stringify(this.state.descuentos));
     //20 - ENFERMEDAD SIN JUSTIFICAR
     //21 - FAMILIAR ENFERMO SIN JUSTIF
@@ -157,7 +158,6 @@ class UploadPage extends React.Component {
     //203
     //206 EXCESO DE ENFERMEDAD PROLONGADA
     //245 1 DÍA A CUENTA S/JUSTIF
-
     // -- CODIGOS DE EXCESOS EXENFAMIL Y EXENFER --
     //49 - EXCESO AUSENCIAS ENFERMEDAD
     //51 - EXCESO AUSENCIAS FAMILIAR ENF.
@@ -193,10 +193,9 @@ class UploadPage extends React.Component {
       {
         complete: function(results) {
           var rows = results.data;
-          console.log(rows);
           var dias = 0,
-            diasenfer = 0,
-            diasfamil = 0;
+           diasenfer = 0,
+           diasfamil = 0;
           var i = 0;
           var keyAct = 0;
           var x = 0;
@@ -213,6 +212,11 @@ class UploadPage extends React.Component {
           };
           var legajoAct = rows[i][iObserv + 1];
           while (i < rows.length - 1) {
+            //GUARDO OFICINA EN ARRAY PARA VER TODAS LAS OFICINAS
+            if(!listOficinasTest.includes(rows[i][iObserv + 3].substring(7,10))){
+                  listOficinasTest.push(rows[i][iObserv + 3].substring(7,10));
+            }
+
             var nuevo = null;
             var ausenciasAct = [];
             dias = 0;
@@ -245,6 +249,7 @@ class UploadPage extends React.Component {
                     key: keyAct,
                     default: "0",
                     legajo: legajoAct.substring(3, legajoAct.indexOf(" -")),
+                    oficina: rows[i][iObserv + 3].substring(7,10),
                     nombre: rows[i][iObserv + 2].replace("�", "Ñ"),
                     diasdesc: dias.toString(),
                     diasexenfer: diasenfer.toString(),
@@ -264,11 +269,13 @@ class UploadPage extends React.Component {
               descuentosAus[0].agentesAus.push(nuevo);
             }
           }
+          console.log(listOficinasTest);
         }
       },
       this.setState(
         {
-          descuentos: descuentosAus
+          descuentos: descuentosAus,
+          listOficinas: listOficinasTest
         },
         () => {
           if (this.state.checkNov) {
@@ -300,6 +307,7 @@ class UploadPage extends React.Component {
       {
         complete: function(results) {
           var rows = results.data;
+          console.log(rows);
           var dias = -1;
           var i = 0;
           var keyAct = 0;

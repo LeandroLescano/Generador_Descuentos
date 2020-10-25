@@ -9,10 +9,9 @@ import {
   MDBModalBody,
   MDBModalHeader,
   MDBBtn,
-  MDBModalFooter
+  MDBModalFooter,
 } from "mdbreact";
 import "./HomePage.css";
-import firebase from "firebase";
 import Papa from "papaparse";
 
 class UploadPage extends React.Component {
@@ -35,9 +34,9 @@ class UploadPage extends React.Component {
         nombre: "",
         numero: null,
         agentesAus: [],
-        agentesNov: []
-      }
-    ]
+        agentesNov: [],
+      },
+    ],
   };
 
   recargar = () => {
@@ -46,9 +45,10 @@ class UploadPage extends React.Component {
 
   scrollToTop = () => window.scrollTo(0, 0);
 
-  handleClick = e => {
+  //Function for handle the click on buttons
+  handleClick = (e) => {
     this.setState({
-      typeFile: e.target.value
+      typeFile: e.target.value,
     });
     if (e.target.value === "Novedades") {
       let input = document.getElementById("fileNovedades");
@@ -59,35 +59,42 @@ class UploadPage extends React.Component {
     }
   };
 
-  handleChange = e => {
+  //Function for handle the files uploaded
+  handleChange = (e) => {
     let nameFile = e.target.value.substr(12);
+
+    //Check if exist any file
     if (e.target.files.length > 0) {
+      //Check if the button pressed is of novelties or absences
       if (this.state.typeFile === "Novedades") {
+        //Load the file in state
         this.setState(
           {
             nameNovedades: nameFile,
-            fileNovedades: e.target.files[0]
+            fileNovedades: e.target.files[0],
           },
           () => {
             let check = false;
+            //Check format of the file
             if (
               this.state.fileNovedades !== null &&
               this.state.fileNovedades.type !== "application/vnd.ms-excel"
             ) {
               this.toggleModal(1)();
               this.setState({
-                checkNov: check
+                checkNov: check,
               });
             } else {
+              //Check if the file is the required
               this.papaParsePromiseNov(this.state.fileNovedades).then(
-                results => {
+                (results) => {
                   if (!results) {
                     this.toggleModal(3)();
                   } else {
                     check = true;
                   }
                   this.setState({
-                    checkNov: check
+                    checkNov: check,
                   });
                 }
               );
@@ -98,28 +105,30 @@ class UploadPage extends React.Component {
         this.setState(
           {
             nameAusencias: nameFile,
-            fileAusencias: e.target.files[0]
+            fileAusencias: e.target.files[0],
           },
           () => {
             let check = false;
+            //Check format of the file
             if (
               this.state.fileAusencias !== null &&
               this.state.fileAusencias.type !== "application/vnd.ms-excel"
             ) {
               this.toggleModal(1)();
               this.setState({
-                checkAus: check
+                checkAus: check,
               });
             } else {
+              //Check if the file is the required
               this.papaParsePromiseAus(this.state.fileAusencias).then(
-                results => {
+                (results) => {
                   if (!results) {
                     this.toggleModal(2)();
                   } else {
                     check = true;
                   }
                   this.setState({
-                    checkAus: check
+                    checkAus: check,
                   });
                 }
               );
@@ -130,11 +139,12 @@ class UploadPage extends React.Component {
     }
   };
 
+  // Function for read the file of absences
   leerArchivoA = (file, tipo) => {
     let reader = new FileReader();
     reader.readAsDataURL(file);
 
-    var listOficinasTest = []
+    var listOficinasTest = [];
     var descuentosAus = JSON.parse(JSON.stringify(this.state.descuentos));
     //20 - ENFERMEDAD SIN JUSTIFICAR
     //21 - FAMILIAR ENFERMO SIN JUSTIF
@@ -186,16 +196,16 @@ class UploadPage extends React.Component {
       150,
       203,
       206,
-      245
+      245,
     ];
     Papa.parse(
       file,
       {
-        complete: function(results) {
+        complete: function (results) {
           var rows = results.data;
           var dias = 0,
-           diasenfer = 0,
-           diasfamil = 0;
+            diasenfer = 0,
+            diasfamil = 0;
           var i = 0;
           var keyAct = 0;
           var x = 0;
@@ -208,15 +218,16 @@ class UploadPage extends React.Component {
             nombre: oficinaAct.substring(oficinaAct.indexOf("- ") + 8),
             numero: oficinaAct.substring(7, 10),
             agentesAus: [],
-            agentesNov: []
+            agentesNov: [],
           };
           var legajoAct = rows[i][iObserv + 1];
           while (i < rows.length - 1) {
             //GUARDO OFICINA EN ARRAY PARA VER TODAS LAS OFICINAS
-            if(!listOficinasTest.includes(rows[i][iObserv + 3].substring(7,10))){
-                  listOficinasTest.push(rows[i][iObserv + 3].substring(7,10));
+            if (
+              !listOficinasTest.includes(rows[i][iObserv + 3].substring(7, 10))
+            ) {
+              listOficinasTest.push(rows[i][iObserv + 3].substring(7, 10));
             }
-
             var nuevo = null;
             var ausenciasAct = [];
             dias = 0;
@@ -235,7 +246,7 @@ class UploadPage extends React.Component {
                   fechai: rows[i][iObserv + 6],
                   fechaf: rows[i][iObserv + 7],
                   dias: parseInt(rows[i][iObserv + 8], 10),
-                  descripcion: rows[i][iObserv + 11]
+                  descripcion: rows[i][iObserv + 11],
                 });
                 if (codigoNov === "49") {
                   diasenfer += parseInt(rows[i][iObserv + 8], 10);
@@ -249,12 +260,12 @@ class UploadPage extends React.Component {
                     key: keyAct,
                     default: "0",
                     legajo: legajoAct.substring(3, legajoAct.indexOf(" -")),
-                    oficina: rows[i][iObserv + 3].substring(7,10),
+                    oficina: rows[i][iObserv + 3].substring(7, 10),
                     nombre: rows[i][iObserv + 2].replace("�", "Ñ"),
                     diasdesc: dias.toString(),
                     diasexenfer: diasenfer.toString(),
                     diasexenfamil: diasfamil.toString(),
-                    ausencias: ausenciasAct
+                    ausencias: ausenciasAct,
                   })
                 );
               }
@@ -270,12 +281,12 @@ class UploadPage extends React.Component {
             }
           }
           console.log(listOficinasTest);
-        }
+        },
       },
       this.setState(
         {
           descuentos: descuentosAus,
-          listOficinas: listOficinasTest
+          listOficinas: listOficinasTest,
         },
         () => {
           if (this.state.checkNov) {
@@ -288,10 +299,13 @@ class UploadPage extends React.Component {
     );
   };
 
+  // Function for read the file of novelties
   leerArchivoN = (file, tipo, descuentoAnterior) => {
     let reader = new FileReader();
     reader.readAsDataURL(file);
     var descuentosNov;
+
+    //Check if exists previous discounts
     if (descuentoAnterior != null) {
       descuentosNov = Object.assign({}, descuentoAnterior);
     } else {
@@ -305,7 +319,8 @@ class UploadPage extends React.Component {
     Papa.parse(
       file,
       {
-        complete: function(results) {
+        complete: function (results) {
+          //Initialization of variables
           var rows = results.data;
           console.log(rows);
           var dias = -1;
@@ -313,12 +328,13 @@ class UploadPage extends React.Component {
           var keyAct = 0;
           var oficinaAct = rows[0][6];
 
+          //If exist previous discounts, copy the name, number and discounts to the new variable
           if (descuentoAnterior != null) {
             descuentosNov[0] = {
               nombre: descuentoAnterior[0].nombre,
               numero: descuentoAnterior[0].numero,
               agentesAus: descuentoAnterior[0].agentesAus,
-              agentesNov: []
+              agentesNov: [],
             };
           } else {
             descuentosNov[0] = {
@@ -328,29 +344,37 @@ class UploadPage extends React.Component {
                 oficinaAct.indexOf("Oficina") + 11
               ),
               agentesAus: [],
-              agentesNov: []
+              agentesNov: [],
             };
           }
           var legajoAct = rows[i][11];
+
+          //Iterate for all the rows
           while (i < rows.length - 1) {
             var nuevo = null;
             var horas = {
               hora: 0,
-              min: 0
+              min: 0,
             };
             var novedadesAct = [];
             dias = -1;
             keyAct = keyAct + 1;
             legajoAct = rows[i][16].substring(3, 8);
+
+            //Check if the employee is the same for add the discounts
             while (legajoAct === rows[i][16].substring(3, 8)) {
               let Novedad = rows[i][20];
               let codigoNov = Novedad.substring(0, Novedad.indexOf(" -"));
+
+              //Check if the code of the discount is into the list
               if (codigosDesc.includes(parseInt(codigoNov))) {
                 novedadesAct.push({
                   nombre: Novedad.substring(Novedad.indexOf("- ") + 2),
                   valor: rows[i][23], // Tiempo ej: 00:15
-                  dias: parseInt(rows[i][18], 10)
+                  dias: parseInt(rows[i][18], 10),
                 });
+
+                //Check code of the discount, if it is 4, add one day, else calculate the hours
                 if (codigoNov === "4") {
                   dias++;
                 } else {
@@ -365,6 +389,8 @@ class UploadPage extends React.Component {
                   }
                 }
                 var horasDesc = horas.hora;
+
+                //Check hours and minutes for calculate the discount
                 if (horasDesc <= 0) {
                   if (horas.min > 15 && horas.min <= 30) {
                     horasDesc += 0.5;
@@ -380,6 +406,8 @@ class UploadPage extends React.Component {
                 }
                 horasDesc = horasDesc.toString().replace(",", ".");
                 let diasDesc = 0;
+
+                //Add discounts to employee
                 if (dias >= 1) {
                   diasDesc = dias;
                 }
@@ -392,7 +420,7 @@ class UploadPage extends React.Component {
                       nombre: rows[i][16].substring(11).replace("�", "Ñ"),
                       diasdesc: diasDesc.toString(),
                       horasdesc: horasDesc.toString(),
-                      novedades: novedadesAct
+                      novedades: novedadesAct,
                     })
                   );
                 }
@@ -404,11 +432,12 @@ class UploadPage extends React.Component {
                 break;
               }
             }
+
             if (nuevo !== null) {
               if (descuentosNov[0].agentesAus.length > 0) {
                 let indexAgent = descuentosNov[0].agentesAus.findIndex(
                   // eslint-disable-next-line
-                  agent => agent.legajo === nuevo.legajo
+                  (agent) => agent.legajo === nuevo.legajo
                 );
                 if (indexAgent !== -1 && nuevo.diasdesc > 0) {
                   descuentosNov[0].agentesAus[indexAgent].diasdesc =
@@ -416,7 +445,7 @@ class UploadPage extends React.Component {
                     parseInt(nuevo.diasdesc);
                 } else if (nuevo.diasdesc > 0) {
                   descuentosNov[0].agentesAus.push(nuevo);
-                  descuentosNov[0].agentesAus.sort(function(a, b) {
+                  descuentosNov[0].agentesAus.sort(function (a, b) {
                     return a.legajo - b.legajo;
                   });
                 }
@@ -424,11 +453,11 @@ class UploadPage extends React.Component {
               descuentosNov[0].agentesNov.push(nuevo);
             }
           }
-        }
+        },
       },
       this.setState(
         {
-          descuentos: descuentosNov
+          descuentos: descuentosNov,
         },
         () => {
           this.props.onUpload(this.state.descuentos);
@@ -437,33 +466,34 @@ class UploadPage extends React.Component {
     );
   };
 
-  subirArchivo = file => {
-    const storageRef = firebase.storage().ref(`/Archivos/${file.name}`);
-    const task = storageRef.put(file);
-    task.on(
-      "state_changed",
-      snapshot => {
-        let percentage =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        this.setState({
-          uploadValue: percentage
-        });
-      },
-      error => {
-        console.log(error.message);
-      },
-      () => {
-        this.setState({
-          uploadValue: 100
-        });
-      }
-    );
-  };
+  // subirArchivo = file => {
+  //   const storageRef = firebase.storage().ref(`/Archivos/${file.name}`);
+  //   const task = storageRef.put(file);
+  //   task.on(
+  //     "state_changed",
+  //     snapshot => {
+  //       let percentage =
+  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  //       this.setState({
+  //         uploadValue: percentage
+  //       });
+  //     },
+  //     error => {
+  //       console.log(error.message);
+  //     },
+  //     () => {
+  //       this.setState({
+  //         uploadValue: 100
+  //       });
+  //     }
+  //   );
+  // };
 
-  papaParsePromiseAus = function(file) {
-    return new Promise(function(complete, error) {
+  //Function for check if the file of absences is correct
+  papaParsePromiseAus = function (file) {
+    return new Promise(function (complete, error) {
       Papa.parse(file, {
-        step: function(results, parser) {
+        step: function (results, parser) {
           var rows = results.data;
           for (var x = 0; x < rows.length; x++) {
             if (rows[x] === "Dias Corridos") {
@@ -472,15 +502,16 @@ class UploadPage extends React.Component {
             }
           }
           complete(false);
-        }
+        },
       });
     });
   };
 
-  papaParsePromiseNov = function(file) {
-    return new Promise(function(complete, error) {
+  //Function for check if the file of novelties is correct
+  papaParsePromiseNov = function (file) {
+    return new Promise(function (complete, error) {
       Papa.parse(file, {
-        step: function(results, parser) {
+        step: function (results, parser) {
           var rows = results.data;
           for (var x = 0; x < rows.length; x++) {
             if (rows[x] === "Valor") {
@@ -488,11 +519,12 @@ class UploadPage extends React.Component {
             }
           }
           complete(false);
-        }
+        },
       });
     });
   };
 
+  //Function for start the calculation of discounts
   generarDescuentos = () => {
     if (this.state.checkAus) {
       this.leerArchivoA(this.state.fileAusencias, "A");
@@ -501,10 +533,11 @@ class UploadPage extends React.Component {
     }
   };
 
-  toggleModal = num => () => {
+  //Function for toggle the modals
+  toggleModal = (num) => () => {
     let modalNumber = "modal" + num;
     this.setState({
-      [modalNumber]: !this.state[modalNumber]
+      [modalNumber]: !this.state[modalNumber],
     });
   };
 

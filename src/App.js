@@ -6,7 +6,7 @@ import {
   MDBNavbarToggler,
   MDBCollapse,
   MDBNavItem,
-  MDBFooter
+  MDBFooter,
 } from "mdbreact";
 // import { ReactComponent as Logo } from "./assets/logo.svg";
 import { BrowserRouter as Router } from "react-router-dom";
@@ -21,7 +21,7 @@ firebase.initializeApp({
   storageBucket: "generador-descuentos.appspot.com",
   messagingSenderId: "91523567902",
   appId: "1:91523567902:web:9cd9a13edc8b30d609f90f",
-  measurementId: "G-FBTKKQ9H97"
+  measurementId: "G-FBTKKQ9H97",
 });
 
 class App extends Component {
@@ -32,15 +32,15 @@ class App extends Component {
     nameAusencias: "",
     fileNovedades: null,
     fileAusencias: null,
-    uploadValue: 0
+    uploadValue: 0,
   };
 
-  toggleCollapse = collapseID => () =>
-    this.setState(prevState => ({
-      collapseID: prevState.collapseID !== collapseID ? collapseID : ""
+  toggleCollapse = (collapseID) => () =>
+    this.setState((prevState) => ({
+      collapseID: prevState.collapseID !== collapseID ? collapseID : "",
     }));
 
-  closeCollapse = collapseID => () => {
+  closeCollapse = (collapseID) => () => {
     window.scrollTo(0, 0);
     this.state.collapseID === collapseID && this.setState({ collapseID: "" });
   };
@@ -92,7 +92,7 @@ class App extends Component {
           <MDBFooter color="indigo">
             <div>
               <p className="footer-copyright mb-2 pb-1 pt-2 text-center">
-                &copy; {new Date().getFullYear()} Copyright: Lescano, Leandro
+                {new Date().getFullYear()} - Desarrollado por Lescano Leandro
                 Nicolas{" "}
               </p>
             </div>

@@ -176,6 +176,9 @@ function ResultPage(props) {
     console.log("checkOmisionesF");
     var today = new Date();
     var mesAnterior = today.getMonth();
+    if (mesAnterior === 0) {
+      mesAnterior = 12;
+    }
     console.log(today);
     console.log("mesAnterior: " + mesAnterior);
 
@@ -185,9 +188,18 @@ function ResultPage(props) {
         .filter((agent) =>
           agent.ausencias.some(
             (aus) =>
-              parseInt(aus.fechai.substring(4, 5)) < mesAnterior ||
-              parseInt(aus.fechaf.substring(4, 5)) > mesAnterior ||
-              parseInt(aus.fechai.substring(6, 10) < today.getFullYear())
+              parseInt(
+                aus.fechai.substring(
+                  aus.fechai.indexOf("/") + 1,
+                  aus.fechai.lastIndexOf("/")
+                )
+              ) !== mesAnterior ||
+              parseInt(
+                aus.fechaf.substring(
+                  aus.fechaf.indexOf("/") + 1,
+                  aus.fechaf.lastIndexOf("/")
+                )
+              ) !== mesAnterior
           )
         );
     }

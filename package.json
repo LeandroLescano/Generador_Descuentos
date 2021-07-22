@@ -26,7 +26,7 @@
     "react-scripts": "^3.3.0",
     "read-excel-file": "^4.0.5",
     "sweetalert2": "^9.15.3",
-    "xlsx": "^0.15.4"
+    "xlsx": "^0.17.0"
   },
   "scripts": {
     "start": "react-scripts start",

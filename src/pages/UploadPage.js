@@ -78,7 +78,8 @@ class UploadPage extends React.Component {
             //Check format of the file
             if (
               this.state.fileNovedades !== null &&
-              this.state.fileNovedades.type !== "application/vnd.ms-excel"
+              this.state.fileNovedades.type !== "application/vnd.ms-excel" &&
+              this.state.fileNovedades.type !== "text/csv"
             ) {
               this.toggleModal(1)();
               this.setState({
@@ -112,7 +113,8 @@ class UploadPage extends React.Component {
             //Check format of the file
             if (
               this.state.fileAusencias !== null &&
-              this.state.fileAusencias.type !== "application/vnd.ms-excel"
+              this.state.fileAusencias.type !== "application/vnd.ms-excel" &&
+              this.state.fileAusencias.type !== "text/csv"
             ) {
               this.toggleModal(1)();
               this.setState({
@@ -172,31 +174,8 @@ class UploadPage extends React.Component {
     //49 - EXCESO AUSENCIAS ENFERMEDAD
     //51 - EXCESO AUSENCIAS FAMILIAR ENF.
     var codigosDesc = [
-      20,
-      21,
-      22,
-      28,
-      32,
-      42,
-      43,
-      45,
-      46,
-      47,
-      48,
-      49,
-      51,
-      53,
-      55,
-      60,
-      64,
-      100,
-      117,
-      122,
-      133,
-      150,
-      203,
-      206,
-      245,
+      20, 21, 22, 28, 32, 42, 43, 45, 46, 47, 48, 49, 51, 53, 55, 60, 64, 100,
+      117, 122, 133, 150, 203, 206, 245,
     ];
     Papa.parse(
       file,
